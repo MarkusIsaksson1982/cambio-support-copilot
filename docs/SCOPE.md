@@ -13,7 +13,7 @@ All data synthetic. Supersedes the provisional leanings in [SCOPE-DECISIONS.md](
 
 ## Non-goals
 - No auto-send, ever. No clinical advice. No reading or changing a real journal.
-- No real patient data; no full FHIR/openEHR conformance claim (adapter emits `mapping_status` / `needs_review`).
+- No real patient data. No FHIR/openEHR mapping adapter is implemented, and this demo makes no conformance claim.
 - Incident plugin logic and retrieval over the 11 synthetic knowledge-base documents are in the product (7 Nov). An incident always hands off. Friday rules and the golden-label pass are closed (6 Nov).
 
 ## Schemas

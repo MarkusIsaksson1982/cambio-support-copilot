@@ -20,7 +20,7 @@ There are two ways to add `incident_report` (avvikelse). Both use the same contr
    - `handoff_reasons(...)`: for example `harm in {"allvarlig","okand"}`, or an empty `what`.
 2. `confidence_threshold` is `0.6`. The old skeleton used `1.01`. Every case still hands off because of `incident_always_human`. If the extracted confidence is below `0.6`, the core also adds `low_confidence`.
 3. Tests: copy `tests/test_pipeline.py` patterns and run the plugin with `FakeAdapter` replies.
-4. Bridge: a `support_ticket` labelled `journalfel` already carries `output.suggest_request_type = "incident_report"`. A UI button can re-submit the **masked** text as `{"type": "incident_report", ...}`.
+4. Bridge: a `support_ticket` labelled `journalfel` already carries `output.suggest_request_type = "incident_report"`. The API and CLI accept a follow-up `{"type": "incident_report", ...}` with the **masked** text. The demo page does not expose that button; the 8-minute interview path stays on the four support-ticket examples.
 
 When to choose (a): one deployable, one audit log, shared UI. This is the default for the demo.
 

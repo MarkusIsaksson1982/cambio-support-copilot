@@ -12,7 +12,7 @@ Request types are **plugins** (`copilot/plugins/*`). `support_ticket` and `incid
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/python -m pytest -q                                 # 128 passed, 11 xfailed (Luhn-invalid numbers; isolated given names; placeholder 'patient X')
+.venv/bin/python -m pytest -q                                 # 137 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
 .venv/bin/python -m copilot eval                              # offline pack, docs/EVAL-2026-11-08.md
 .venv/bin/uvicorn copilot.api:app --host 127.0.0.1 --port 8000
 ```
@@ -70,7 +70,9 @@ Prompts sent to outside models were checked first so they contained no personal 
 - `incident_report`: harm words (`fel patient`, `fel dos`, whole-word `fall`), one extraction step, `status=draft`, and `incident_always_human` on every case. Nothing is sent.
 
 ## What landed on 9 Nov
-- Bare Swedish given-name + surname pairs in patient context are masked as `[namn-maskat]`. The matcher combines role cues (`patient`, `testpatienten`, `Exempelpatient:`), a name sitting immediately before a personnummer-shaped token, and a given-name gazetteer. On G-001 both the Skatteverket test number and the synthetic name are masked. Isolated given-name signatures such as `/Mikael` and placeholder forms such as `patient X` are still visible. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff.
+- Bare Swedish given-name + surname pairs in patient context are masked as `[namn-maskat]`. The matcher combines role cues (`patient`, `testpatienten`, `Exempelpatient:`), a name sitting immediately before a personnummer-shaped token, and a given-name gazetteer. On G-001 both the Skatteverket test number and the synthetic name are masked.
+- Staff slash-signatures such as `/Mikael` and the single-letter placeholder `patient X` are also masked. A bare given name with no slash, title or surname (for example `Hej Mikael,`) can still appear. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff.
+- Shared port fixtures were regenerated from the live pipeline. `incident_report` now shows `status: draft` (the plugin has been implemented since 7 Nov). The live plugin never returns `not_implemented`.
 
 ## Demo page
 `ui/index.html` is served at `/`. Paste a ticket, read the masked text, the draft and the citation, then approve, reject or take over. Inspelat mode shows `ui/examples.json` and does not send a decision. Godkänn stays disabled unless the case is `awaiting_approval`. The sidebar repeats `docs/EVAL-2026-11-08.md` and is not a live-model score.
@@ -81,6 +83,17 @@ The page disables "Redigera och skicka" when `patient_data_detected` is set. The
 
 A silent recording of the page (G-001 handoff with the name and personnummer masked, the SITHS approval, the rejected print-runbook citation, and the offline sidebar) is at [docs/cambio-demo-recording.mp4](docs/cambio-demo-recording.mp4). A short one-pager is at [docs/one-pager.pdf](docs/one-pager.pdf).
 
-## Stubbed / not yet
-- Mask floor closed for genitive names, `(at)` e-mail, `journalnummer`, parenthesized/`0046` phones (REVIEW-grok #1–2). Given-name + surname pairs in patient context are now masked. Remaining strict xfails are deliberate demo gaps: Luhn-invalid personnummer (still a handoff), isolated given names without a surname, and placeholder forms such as `patient X`.
-- Live-model flakiness. `docs/EVAL-2026-11-08.md` repeats the offline path three times and does not call a model. A separate three-repeat glm probe is in `docs/LIVE-PROBE-2026-11-09.md`. It is not that score, and the demo page stays on adapter `none`.
+## Known gaps / roadmap
+
+These are deliberate demo limits, not unfinished buttons on the interview page.
+
+- **Luhn-invalid personnummer.** Masking stays Luhn-strict so G-003 can show the gap: `19850372-6614` remains visible and the case still hands off (`patient_data_detected`). The 10 xfailed tests are this class.
+- **Bare isolated given names.** A name with no slash signature, title/role cue or surname (for example `Hej Mikael,`) is left visible. Slash signatures (`/Mikael`) and the placeholder `patient X` are masked.
+- **No incident form on the demo page.** The `incident_report` plugin is live on the API and CLI (`type=incident_report`, or `python -m copilot incident-from-envelope`). The four page buttons stay `support_ticket` so the 8-minute path is unchanged.
+- **API edit-on-handoff.** The page disables "Redigera och skicka" when `patient_data_detected` is set. The API still accepts `edit` on a handoff if `edited_reply` is supplied; that is the reviewed escape hatch.
+- **In-memory audit and results.** `RESULTS` and `AUDIT` on the demo API live in the process and disappear when it stops. `AuditLog` can append JSONL when given a path; the page does not do that. A second decision on the same id is blocked in the UI, not in the API.
+- **`sent` is local.** Approve and edit record a local audited label. There is no ticketing integration and nothing is delivered outbound.
+- **No FHIR/openEHR mapping adapter.** Earlier notes mentioned an adapter that would emit `mapping_status` / `needs_review`. That adapter is not implemented, and this demo makes no conformance claim.
+- **Language ports are contract round-trips.** `ports/csharp`, `ports/java` and `ports/typescript` deserialize and re-serialize the shared JSON fixtures. They do not reimplement the Python pipeline. The incident schema still allows `status: not_implemented` for older consumers; the live plugin emits `draft`.
+- **Retrieval is token overlap**, with a light Swedish stem, not a neural ranker. ticket-008 is the known false friend (print-runbook citation). The hit threshold is frozen for interview week.
+- **Live-model variability.** `docs/EVAL-2026-11-08.md` repeats the offline path three times and does not call a model. A separate three-repeat probe is in `docs/LIVE-PROBE-2026-11-09.md`. It is not that score. The demo page stays on adapter `none`. `--adapter fake` remains a CLI-only deterministic stub.
