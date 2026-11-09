@@ -1,0 +1,126 @@
+[
+ {
+  "id": "codex:T-003",
+  "text": "Hej, vi saknar labsvar från det fiktiva laboratoriet Nordprov sedan kl. 09. HL7-meddelandena verkar ligga kvar i kön. Kan ni kontrollera integrationen och återköra dem? Exempelpatient: Tova Näckros, 810417-2846.",
+  "must_be_masked": [
+   "Tova Näckros"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "810417-2846"
+  ]
+ },
+ {
+  "id": "codex:T-005",
+  "text": "Hej, jag ser två nästan likadana recept i patientens läkemedelslista och vet inte vilket som är aktivt. Patienten är här nu och väntar. Kan någon titta på detta tillsammans med mig? Exempelnamn: Vilmer Rönn, 750923-6318.",
+  "must_be_masked": [
+   "Vilmer Rönn"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "750923-6318"
+  ]
+ },
+ {
+  "id": "grok-build:T-005",
+  "text": "I förskrivningsmodulen sparar jag en ordination och när vyn laddas om står det 50 mg i stället för 5 mg på beredningsraden. Det gäller testpatienten Astrid Holmgren, 19740312-4821, i demokliniken Solbacken. Receptet är inte skickat till något apotek, det ligger bara som utkast i test. Samma sak hände med tabletter men inte med mixtur. Kan ni återskapa och skicka till utveckling?",
+  "must_be_masked": [
+   "Astrid Holmgren"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "19740312-4821"
+  ]
+ },
+ {
+  "id": "grok-build:T-006",
+  "text": "Hej, verksamhetschefen bad mig ta ut en lista på alla vårdtillfällen och läkemedelsordinationer för Bengt Lövström 19881105-7394 mellan januari och mars så att de kan jämföra med en extern papperspärm. Jag är osäker på om det här ska gå via rapportmotorn, via journalöppning eller om jag ens får göra uttaget. Personen finns bara i testdatabasen men jag vill inte gissa. Kan en människa säga hur beställningen ska hanteras?",
+  "must_be_masked": [
+   "Bengt Lövström"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "19881105-7394"
+  ]
+ },
+ {
+  "id": "grok-build:T-008",
+  "text": "Avvikelse i acceptanstest: när vi öppnade läkemedelsfliken för övningspatienten Carina Vester 19620228-5510 visades en annan fiktiv patients ordinationslista i ungefär tio sekunder innan vyn rättade sig. Två testläkare hann se preparatnamn som inte hör till Vester. Inget recept skickades och ingen skarp vård pågår, men vi bedömer det som patientsäkerhetsrisk om samma fel finns i produktionslik miljö. Vi har pausat testet och behöver att avvikelseprocessen startas.",
+  "must_be_masked": [
+   "Carina Vester"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "19620228-5510"
+  ]
+ },
+ {
+  "id": "opencode-deepseek-v4.1-flash-free:T-003",
+  "text": "Hej, vi saknar svar från klinisk kemi för Elsa Vinterberg, 870412-3456, i journalsystemet. Provet är taget och analyserat enligt labbets portal, men inget svar har kommit in via HL7 sedan i natt. Andra prover från samma labb har kommit in. Kan ni kontrollera om meddelandet fastnat i integrationsmotorn? Ärendet är brådskande eftersom patienten väntar på svar inför rond. /Mikael, avdelning 4",
+  "must_be_masked": [
+   "Elsa Vinterberg"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked; isolated given-name signatures such as '/Mikael' are not masked.",
+  "accepted_gaps": [
+   "870412-3456",
+   "Mikael"
+  ]
+ },
+ {
+  "id": "opencode-deepseek-v4.1-flash-free:T-005",
+  "text": "Hej, jag behöver hjälp med en ordination för Nils Kåremark, 920715-8123. Han står på Waran och ett nytt INR-svar ligger på 3,8. Jag är osäker på om jag ska ändra dosen enligt den lokala rutinen eller invänta jourläkare, eftersom patienten också fått ny antibiotika. Kan supporten ge råd om vilken dos som är rätt, eller måste jag prata med någon med kliniskt ansvar? /Lina, sjuksköterska",
+  "must_be_masked": [
+   "Nils Kåremark",
+   "920715-8123"
+  ],
+  "known_gap": "Isolated given-name signatures such as '/Lina' are not masked.",
+  "accepted_gaps": [
+   "Lina"
+  ]
+ },
+ {
+  "id": "opencode-deepseek-v4.1-flash-free:T-007",
+  "text": "Allvarligt ärende: på avdelning 2 upptäckte vi att en patient fått två ordinationer av samma läkemedel registrerade, vilket ledde till att en extra dos gavs i går kväll. Berörd patient är Tova Sjöblom, 781129-4567. Jag har informerat ansvarig läkare och spärrat ordinationen i journalen, men vi behöver en formell avvikelserapport och hjälp att säkra loggarna innan de roteras. Vem tar över ärendet enligt incidentrutinen? /Anna, avdelningschef",
+  "must_be_masked": [
+   "Tova Sjöblom"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked; isolated given-name signatures such as '/Anna' are not masked.",
+  "accepted_gaps": [
+   "781129-4567",
+   "Anna"
+  ]
+ },
+ {
+  "id": "opencode-glm-5.3-flash-free:T-005",
+  "text": "Hej. När jag försöker förskriva en ny dos till min patient Margareta Lindkvist (född 1951-08-14, personnummer 510814-2384) får jag felmeddelandet 'Förskrivning är ej möjlig, kontakta support (kod E-4417)'. Det gäller bara den här patienten, andra med samma läkemedel går bra. Patientens punktdos behövs nu så det är lite trångt i schemat. Kan nån kolla vad som spärrar? Tack! // Dr Söderberg",
+  "must_be_masked": [
+   "Margareta Lindkvist",
+   "Dr Söderberg"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "510814-2384"
+  ]
+ },
+ {
+  "id": "opencode-glm-5.3-flash-free:T-010",
+  "text": "Hej. Jag försöker skriva ut den aktuella medicinlistan för min patient Bengt Ohlsson (pnr 480722-1193) inför hemgång imorgon, men utskriftsdialogen hänger sig på 'Förbereder...'. Skrivaren är grön och skriver ut andra saker, bara listan vil_item inte. Patientens anhöriga väntar på listan nu ikväll, så jag behöver lite snabb hjälp eller förslag på alternativ väg (kopiera text till Word osv vet jag, men det känns fuffens). // Leg. ssk och medicinskt ansvarig, avd 4C",
+  "must_be_masked": [
+   "Bengt Ohlsson"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "480722-1193"
+  ]
+ },
+ {
+  "id": "opencode-nemotron-3.5-lightning-free:T-008",
+  "text": "Kollegan rapporterade att patient X med personnummer 240101-1234 har uppvisat ovanliga symtom efter ny behandling. Vi behöver rådgivning hur vi ska hantera this situationet fortsättningsvis.",
+  "must_be_masked": [],
+  "known_gap": "Placeholder 'patient X' is not a Swedish name pair; Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "patient X",
+   "240101-1234"
+  ]
+ }
+]

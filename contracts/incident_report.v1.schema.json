@@ -1,0 +1,18 @@
+{
+  "$comment": "Output of an incident_report (avvikelse) producer, plugin or separate service. Subset of JSON Schema understood by copilot/core/schema.py.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "what", "when", "where", "harm", "immediate_action", "confidence", "status"],
+  "properties": {
+    "schema_version": {"type": "string", "enum": ["1.0.0"]},
+    "what": {"type": "string"},
+    "when": {"type": "string"},
+    "where": {"type": "string"},
+    "harm": {"type": "string", "enum": ["ingen", "risk", "lindrig", "allvarlig", "okand"]},
+    "immediate_action": {"type": "string"},
+    "confidence": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+    "status": {"type": "string", "enum": ["draft", "not_implemented"]},
+    "route": {"type": "string"},
+    "source_request_id": {"type": "string"}
+  }
+}

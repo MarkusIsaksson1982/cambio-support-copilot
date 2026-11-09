@@ -1,0 +1,120 @@
+{
+ "docs": [
+  {
+   "id": "codex:KB-001",
+   "title": "Felsök inloggning med tvåfaktorskod",
+   "body": "Börja med att kontrollera att användarnamnet är korrekt och att kontot inte är låst. Be användaren prova en ny kod från autentiseringsappen och kontrollera att telefonens datum och tid är automatiska. Om koden fortfarande nekas, kontrollera att användaren har tillgång till registrerad metod i identitetstjänsten. Återställ inte MFA innan identiteten har verifierats enligt organisationens rutin. Vid förlorad telefon eller misstanke om kapat konto ska ärendet skickas till IT-support för säker återställning. Dokumentera tidpunkt, felmeddelande och berörd tjänst, men lägg inte lösenord eller engångskoder i ärendet. Bekräfta med användaren att inloggningen fungerar efter åtgärd.",
+   "tags": [
+    "inloggning",
+    "mfa",
+    "konto"
+   ]
+  },
+  {
+   "id": "codex:KB-002",
+   "title": "Runbook: kontrollera kö för labsvar",
+   "body": "1. Bekräfta vilken miljö och tidsperiod som berörs och om felet gäller en eller flera avsändare. 2. Kontrollera integrationsövervakningen för ködjup, senaste lyckade meddelande och aktuella felkoder. 3. Jämför anslutningsstatus och meddelandeformat med den godkända konfigurationen för laboratoriet. 4. Spara tekniska korrelations-ID:n i ärendet; kopiera inte patientinnehåll till loggar eller fri text. 5. Om meddelanden är fastnade, återkör dem endast enligt den lokala driftsrutinen och efter att dubblettrisk har bedömts. 6. Vid oklar patientkoppling, saknade svar med klinisk påverkan eller risk för felaktig journalföring: stoppa återkörning och kontakta integrationsansvarig samt verksamhetens incidentfunktion. Följ upp att kön töms och att mottagaren bekräftar leverans.",
+   "tags": [
+    "integration",
+    "hl7",
+    "lab",
+    "runbook"
+   ]
+  },
+  {
+   "id": "codex:KB-003",
+   "title": "Felsökning av tom utskrift från journalvyn",
+   "body": "Kontrollera först om problemet gäller ett enstaka dokument eller alla utskrifter från arbetsstationen. Öppna utskriftsförhandsgranskningen och notera om sidorna är tomma redan där. Prova därefter en annan godkänd skrivare och ett testdokument utan patientuppgifter. Om testdokumentet fungerar, kontrollera att rätt journalvy och utskriftsmall används samt att popup-fönster inte blockeras. Starta om webbläsaren och kontrollera att skrivardrivrutinen är uppdaterad enligt IT:s standard. Be användaren notera tid, webbläsarversion, skrivarnamn och eventuell feltext. Skicka vidare till IT-support om flera användare påverkas eller om felet kvarstår. Bifoga aldrig en utskrift med patientuppgifter till en vanlig supportticket; använd godkänd säker kanal vid behov.",
+   "tags": [
+    "utskrift",
+    "journal",
+    "felsökning"
+   ]
+  },
+  {
+   "id": "grok-build:KB-001",
+   "title": "Runbook: upplåsning och inloggning i NovaJournal",
+   "body": "När en användare inte kommer in i journalsystemet NovaJournal ska du först avgöra om felet sitter i kontot, i SITHS-kortet eller i den lokala datorn. Be kollegan läsa upp felmeddelandet ordagrant och ange om inloggningen sker med kort, lösenord eller regionens federerade identitet. Steg 1: be användaren testa kortet i en annan läsare och starta om kortprogrammet. Steg 2: kontrollera i behörighetsregistret att kontot är aktivt, att rätt roll är kopplad till vårdenheten och att kontot inte är låst efter upprepade försök. Steg 3: om kortet fungerar på en annan dator skapar du ett ärende till lokal IT om drivrutin och läsare. Steg 4: saknas rollen uppdaterar du behörigheten endast mot en dokumenterad beställning från verksamhetschef. Steg 5: notera tid, klientversion och om felet kvarstår. Skicka aldrig tillfälliga lösenord i chatten och be aldrig om personnummer för en ren kontofråga.",
+   "tags": [
+    "inloggning",
+    "behörighet",
+    "siths",
+    "runbook"
+   ]
+  },
+  {
+   "id": "grok-build:KB-002",
+   "title": "Runbook: etikett- och journalutskrift",
+   "body": "Utskriftsproblem i NovaJournal delas upp i kö, drivrutin och mall innan ärendet skickas vidare. Steg 1: be användaren skriva ut övningsmallen Etikett-DEMO eller en tom A4-mall, aldrig en skarp journal, när felet ska återskapas. Steg 2: kontrollera att rätt skrivarkö är vald i utskriftsprofilen och att papper eller etikettbredd matchar mallen, till exempel 50 mm för läkemedelsetikett. Steg 3: starta om kön och be användaren logga ut och in så att profilen laddas om. Steg 4: om bara etiketter fallerar men vanlig A4 fungerar ligger felet oftast i drivrutin eller etikettformat och ska till lokal IT. Steg 5: om text saknas i själva journalmallen innan utskrift, och flera klienter påverkas, klassar du ärendet som modulbugg och skickar det till utveckling med version och skärmbild utan patientdata. Steg 6: maskera namn och personnummer om en sådan bild ändå följer med.",
+   "tags": [
+    "utskrift",
+    "etikett",
+    "skrivare",
+    "runbook"
+   ]
+  },
+  {
+   "id": "grok-build:KB-003",
+   "title": "Runbook: avvikelse vid felaktig läkemedelsvy",
+   "body": "Om en läkemedelslista, ordinationsrad eller labbsvar visas för fel person ska du behandla händelsen som en patientsäkerhetsavvikelse även i test, tills det är uteslutet att samma fel kan nå en produktionslik miljö. Steg 1: be rapportören pausa testet och inte skicka recept, remiss eller meddelande. Steg 2: samla tidpunkt, miljö, klientversion, modul och om vyn rättade sig själv. Steg 3: be att namn och personnummer bara anges om de behövs för att återskapa felet, och markera då att underlaget innehåller personuppgifter som ska maskeras i kopior. Steg 4: öppna inte journalen själv för att 'titta snabbt'. Steg 5: registrera ärendet i avvikelseflödet och meddela incidentansvarig samma arbetsdag. Steg 6: utveckling får en separat teknisk kopia först efter att incidentansvarig godkänt omfattningen. En vanlig visningsbugg utan sammanblandad patientidentitet ska inte använda denna runbook.",
+   "tags": [
+    "incident",
+    "patientsäkerhet",
+    "läkemedel",
+    "runbook"
+   ]
+  },
+  {
+   "id": "opencode-deepseek-v4.1-flash-free:KB-001",
+   "title": "Återställ behörighet efter byte av klinik eller enhet",
+   "body": "Syfte: hjälpa användare som får nekad inloggning efter att ha bytt klinik, enhet eller roll. Kontrollera först att SITHS-kortet fungerar i ett annat system och att datorns klocka är korrekt.\nSteg 1: Be användaren logga ut helt och starta om webbläsaren.\nSteg 2: Kontrollera i behörighetsportalen att användarens roll och enhet är uppdaterade.\nSteg 3: Ta bort gamla enhetskopplingar som ligger kvar från tidigare klinik.\nSteg 4: Låt användaren logga in igen och verifiera att rätt vårdcentral visas i välkomstfönstret.\nSteg 5: Om felet kvarstår, skapa ett ärende till IT-supporten med användarens namn, användar-ID, tidpunkt och exakt felmeddelande.\nSteg 6: Dokumentera vilka behörigheter som ändrats i ärendet. Skicka aldrig kortets PIN-kod eller lösenord i ärendet.",
+   "tags": [
+    "inloggning",
+    "behörighet",
+    "siths"
+   ]
+  },
+  {
+   "id": "opencode-deepseek-v4.1-flash-free:KB-002",
+   "title": "Felsökning av uteblivna labbsvar via HL7",
+   "body": "Använd den här runbooken när labbsvar inte når journalsystemet. Börja med att kontrollera om svaret finns i labbets egen portal. Om det finns där men saknas i journalen är felet sannolikt i integrationskedjan.\nSteg 1: Kontrollera status i integrationsmotorn och sök på meddelande-ID eller provtagningsdatum.\nSteg 2: Verifiera att rätt mottagande enhet och patientidentifierare är mappade.\nSteg 3: Titta efter köade eller avvisade HL7-meddelanden och läs felkoden.\nSteg 4: Skicka om meddelandet från labbets utskickskö om det ligger fast.\nSteg 5: Bekräfta med beställande enhet att svaret syns i rätt journal.\nSteg 6: Om felet kvarstår, eskalera till integrationsteamet med tidsstämpel, meddelande-ID och påverkad patient så att de kan följa hela kedjan. Logga aldrig patientdata i allmänna chattkanaler.",
+   "tags": [
+    "integration",
+    "hl7",
+    "labb"
+   ]
+  },
+  {
+   "id": "opencode-deepseek-v4.1-flash-free:KB-003",
+   "title": "Rutin vid misstänkt patientsäkerhetsincident",
+   "body": "Denna rutin gäller när ett systemfel eller ett arbetsflödesfel kan ha påverkat patientsäkerheten.\nSteg 1: Säkra patienten och informera ansvarig läkare eller vårdchef direkt.\nSteg 2: Spärra eller korrigera det som orsakat händelsen i journalsystemet om det är säkert att göra det.\nSteg 3: Registrera en avvikelse enligt verksamhetens rutin och markera den som patientsäkerhetsincident.\nSteg 4: Spara tidpunkt, användare, patient-ID och en kort beskrivning av händelseförloppet.\nSteg 5: Kontakta IT-supporten och begär att loggar säkras innan de roteras.\nSteg 6: Lämna över till incidentprocessen som utser utredare och ansvarar för uppföljning. Diskutera inte identifierbara patientuppgifter i öppna kanaler. Dokumentera alla åtgärder löpande.",
+   "tags": [
+    "incident",
+    "patientsäkerhet",
+    "avvikelse"
+   ]
+  },
+  {
+   "id": "opencode-glm-5.3-flash-free:KB-001",
+   "title": "Återställa lösenord och låsa upp konto i tjockis-klienten",
+   "body": "Detta gäller alla medarbetare som använder tjockis-klienten för journalsystemet. 1) Kontrollera först om kontot är spärrat: fem misslyckade inloggningsförsök inom 10 minuter spärrar kontot i 15 minuter (karantän). Vänta ut tiden, försök inte igen under karantänen eftersom timern då nollställs. 2) Använd länken 'Glömt lösenord?' på inloggningssidan. En verifieringskod skickas till din registrerade tjänstetelefon. Koden gäller i 10 minuter. 3) Skapa ett nytt lösenord med minst 14 tecken, blandade teckentyper och inga återanvända lösenord. 4) Tänk på att det nya lösenordet kan ta upp till 2 minuter att spridas till tjockis-klienten; logga inte in förrän minst 2 minuter passerat, annars blir kontot åter spärrat. 5) Funkar fortfarande inte inloggningen efter detta, kontakta IT-support via tjockis-portalen och uppge ditt användarnamn samt ungefär när du senast lyckades logga in. Ange aldrig ditt lösenord i ärendeärendet - supporten behöver aldrig det.",
+   "tags": [
+    "login_access",
+    "losenord",
+    "konto_sparrat",
+    "jf"
+   ]
+  },
+  {
+   "id": "opencode-glm-5.3-flash-free:KB-002",
+   "title": "Runbook: Utskriftslager i Driftportalen - diagnos och felsökning",
+   "body": "Används av drifttekniker och första linjen vid utskriftsproblem i journalsystemets utskriftslager. Steg 1: Identifiera which kö fastnat - öppna Driftportalen > Utskrift > Köer och leta efter kö med status 'haltande' > 5 min. Steg 2: Kontrollera spooler-hälsan på responsnoderna; om en nod visar röd, flytta köer med knappen 'Ombalansera' och logga händelsen i driftloggen. Steg 3: Om köer fastnar endast för vissa dokumenttyper (t ex medicinlistor eller etiketter), kontrollera inmatningen för dessa mallversioner i Malladministration - en felaktig mallversion är den vanligaste orsaken till att utskrift avbryts mitt i dokumentet. Steg 4: Testa med knappen 'Testutskrift' för aktuell Kö. Om testet fungerar men riktiga utskrift inte gör det, kontrollera behörighetsmallen för användarens roll. Steg 5: Eskalera tillandravarsealet laget om spoolern kraschar mer än två gånger i timmen, eller om utskriftslagret är nere hela klinikverksamheten. Se alltid till att dokumentera i ärendet vilken mall, nod och kö som varit inblandad, det snabbar på nästa felsökning.",
+   "tags": [
+    "printing",
+    "drift",
+    "runbook",
+    "utskrift"
+   ]
+  }
+ ]
+}

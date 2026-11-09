@@ -1,0 +1,21 @@
+{
+  "adapter": "none",
+  "tickets": 44,
+  "repeats": 3,
+  "live_model": false,
+  "source": "docs/EVAL-2026-11-08.md",
+  "note": "A live model is not in these numbers.",
+  "rows": [
+    {"check": "Schema-valid envelopes", "result": "100%"},
+    {"check": "Audit decided matches the envelope", "result": "100%"},
+    {"check": "Handoff rate", "result": "88.6% (39 of 44)"},
+    {"check": "Awaiting a human approval", "result": "5"},
+    {"check": "Patient-data cases that hand off", "result": "100% of 8"},
+    {"check": "needs_human cases that hand off", "result": "100% of 8"},
+    {"check": "Retrieval hits", "result": "13 of 44"},
+    {"check": "Citation faithfulness", "result": "100% of 12 cited drafts"},
+    {"check": "Citation recall", "result": "100% of 12 retrieved, non-journalfel tickets"},
+    {"check": "Incident chain schema-pass", "result": "100% of 4"},
+    {"check": "Repeat mismatches", "result": "0"}
+  ]
+}

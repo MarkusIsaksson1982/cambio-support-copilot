@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "masked_span.v1.schema.json",
+  "title": "Masked text span",
+  "description": "Offsets are zero-based and stop is exclusive; producers set stop at or after start.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["category", "start", "stop", "replacement"],
+  "properties": {
+    "category": {"type": "string", "minLength": 1},
+    "start": {"type": "integer", "minimum": 0},
+    "stop": {"type": "integer", "minimum": 0},
+    "replacement": {"type": "string"}
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "incident_report.v1.schema.json",
+  "$ref": "../../contracts/incident_report.v1.schema.json"
+}

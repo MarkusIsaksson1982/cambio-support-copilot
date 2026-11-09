@@ -1,0 +1,79 @@
+[
+ {
+  "id": "ticket-001",
+  "caption": "SITHS-inloggning",
+  "role": "happy",
+  "text": "Jag kan inte logga in till SITHS-systemet",
+  "frozen": {
+   "status": "awaiting_approval",
+   "handoff_reasons": [],
+   "masked_text": "Jag kan inte logga in till SITHS-systemet",
+   "label": "inloggning",
+   "label_display": "Inloggning / SITHS",
+   "reply_draft": "Återställ behörighet efter byte av klinik eller enhet\nSyfte: hjälpa användare som får nekad inloggning efter att ha bytt klinik, enhet eller roll. Kontrollera först att SITHS-kortet fungerar i ett annat system och att datorns klocka är korrekt.\nSteg 1: Be användaren logga ut helt och starta om webbläsaren.\nSteg 2: Kontrollera i behörighetsportalen att användarens roll och enhet är uppdaterade.\nSteg 3: Ta bort gamla enhetskopplingar som ligger kvar från tidigare klinik.\nSteg 4: Låt användaren logga in igen och verifiera att rätt vårdcentral visas i välkomstfönstret.\nSteg 5: Om felet kvarstår, skapa ett ärende till IT-supporten med användarens namn, användar-ID, tidpunkt och exakt felmeddelande.\nSteg 6: Dokumentera vilka behörigheter som ändrats i ärendet. Skicka aldrig kortets PIN-kod eller lösenord i ärendet.",
+   "citations": [
+    "opencode-deepseek-v4.1-flash-free:KB-001"
+   ],
+   "suggest_request_type": null
+  }
+ },
+ {
+  "id": "ticket-008",
+  "caption": "Sparknapp kraschar",
+  "role": "happy",
+  "text": "Krasch när jag trycker på spara-knappen",
+  "frozen": {
+   "status": "awaiting_approval",
+   "handoff_reasons": [],
+   "masked_text": "Krasch när jag trycker på spara-knappen",
+   "label": "bugg",
+   "label_display": "Systemfel / bugg",
+   "reply_draft": "Runbook: Utskriftslager i Driftportalen - diagnos och felsökning\nAnvänds av drifttekniker och första linjen vid utskriftsproblem i journalsystemets utskriftslager. Steg 1: Identifiera which kö fastnat - öppna Driftportalen > Utskrift > Köer och leta efter kö med status 'haltande' > 5 min. Steg 2: Kontrollera spooler-hälsan på responsnoderna; om en nod visar röd, flytta köer med knappen 'Ombalansera' och logga händelsen i driftloggen. Steg 3: Om köer fastnar endast för vissa dokumenttyper (t ex medicinlistor eller etiketter), kontrollera inmatningen för dessa mallversioner i Malladministration - en felaktig mallversion är den vanligaste orsaken till att utskrift avbryts mitt i dokumentet. Steg 4: Testa med knappen 'Testutskrift' för aktuell Kö. Om testet fungerar men riktiga utskrift inte gör det, kontrollera behörighetsmallen för användarens roll. Steg 5: Eskalera tillandravarsealet laget om spoolern kraschar mer än två gånger i timmen, eller om utskriftslagret är nere hela klinikverksamheten. Se alltid till att dokumentera i ärendet vilken mall, nod och kö som varit inblandad, det snabbar på nästa felsökning.",
+   "citations": [
+    "opencode-glm-5.3-flash-free:KB-002"
+   ],
+   "suggest_request_type": null
+  }
+ },
+ {
+  "id": "G-001",
+  "caption": "Patientdata",
+  "role": "failure",
+  "text": "Titta i journalen för patient som inte kommer upp i sök. Hej, jag är ssk på Demoklinik Norr och behöver hjälp att titta i journalen för Astrid Holmgren 19121212-1212. Hon syns inte när jag söker på namn i EHR, men vi hade henne på UL igår. Kan ni kolla vad som ligger i journalen och om det finns en spärr? Vi behöver anteckningen från gårdagens us inför ronden.",
+  "frozen": {
+   "status": "handoff",
+   "handoff_reasons": [
+    "patient_data_detected",
+    "model_abstained",
+    "low_confidence",
+    "no_grounded_draft"
+   ],
+   "masked_text": "Titta i journalen för patient som inte kommer upp i sök. Hej, jag är ssk på Demoklinik Norr och behöver hjälp att titta i journalen för [namn-maskat] [personnummer-maskat]. Hon syns inte när jag söker på namn i EHR, men vi hade henne på UL igår. Kan ni kolla vad som ligger i journalen och om det finns en spärr? Vi behöver anteckningen från gårdagens us inför ronden.",
+   "label": "ovrigt",
+   "label_display": "Övrigt",
+   "reply_draft": "",
+   "citations": [],
+   "suggest_request_type": null
+  }
+ },
+ {
+  "id": "G-008",
+  "caption": "Ingen träff i kunskapsbasen",
+  "role": "failure",
+  "text": "Saknar funktion för att jämföra två vårdtillfällen sida vid sida. Hej support. Vi saknar en funktion att lägga två vårdtillfällen bredvid varandra när vi går igenom ADL-status. Finns det någon dold vy eller är det något som inte finns i produkten alls? Systemförvaltare på Demoklinik Norr, vi behöver veta om vi ska sluta leta eller om det kommer. Inte bråttom men vi får frågan varje vecka från usk.",
+  "frozen": {
+   "status": "handoff",
+   "handoff_reasons": [
+    "model_abstained",
+    "low_confidence",
+    "no_grounded_draft"
+   ],
+   "masked_text": "Saknar funktion för att jämföra två vårdtillfällen sida vid sida. Hej support. Vi saknar en funktion att lägga två vårdtillfällen bredvid varandra när vi går igenom ADL-status. Finns det någon dold vy eller är det något som inte finns i produkten alls? Systemförvaltare på Demoklinik Norr, vi behöver veta om vi ska sluta leta eller om det kommer. Inte bråttom men vi får frågan varje vecka från usk.",
+   "label": "ovrigt",
+   "label_display": "Övrigt",
+   "reply_draft": "",
+   "citations": [],
+   "suggest_request_type": null
+  }
+ }
+]

@@ -1,0 +1,202 @@
+[
+ {
+  "id": "opencode-deepseek-v4.1-flash-free:T-004",
+  "model": "llama3.2:3b",
+  "text": "Utskrift av journaletiketter hamnar fel. När vi skriver ut etiketter till provtagning från Journalsystemet blir texten förskjuten och halva personnumret hamnar utanför etiketten. Det gäller skrivaren vid rum 12. Vi har bytt etikettpaket och startat om skrivaren utan resultat. Övriga dokument skrivs ut korrekt. Finns det en uppdaterad drivrutin eller något vi kan justera själva? /Emma",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.8}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "codex:T-005",
+  "model": "qwen2.5:3b",
+  "text": "Osäker på receptstatus. Hej, jag ser två nästan likadana recept i patientens läkemedelslista och vet inte vilket som är aktivt. Patienten är här nu och väntar. Kan någon titta på detta tillsammans med mig? Exempelnamn: Vilmer Rönn, 750923-6318.",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.9}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "codex:T-006",
+  "model": "qwen2.5:3b",
+  "text": "Beställa månadsrapport för fiktiv enhet. Skulle vi kunna få en månadsrapport över antal avslutade besök per mottagning för perioden januari–mars? Det gäller testmiljön på den påhittade enheten Ängsbacka. Ange gärna vilket format ni behöver beställningen i.",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.8}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "ticket-002",
+  "model": "llama3.2:3b",
+  "text": "Jag har glömt mitt pinkod till e-tjänsten",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.2, \"rationale\": \"Ingen tydlig anledning att följa upp ett supportärende med denna text\"}",
+  "expected_model_status": "ok",
+  "note": "model label ovrigt != expected inloggning"
+ },
+ {
+  "id": "ticket-004",
+  "model": "llama3.2:3b",
+  "text": "Saknar tillgång till journalfunktioner",
+  "reply": "{\n  \"label\": \"journalfel\",\n  \"confidence\": 0.8,\n  \"rationale\": \"Användaren har problem med att tillgå till journalfunktioner\"\n}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected behorighet"
+ },
+ {
+  "id": "ticket-007",
+  "model": "llama3.2:3b",
+  "text": "Felaktig dos läkemedel noterade i journal",
+  "reply": "{\n  \"label\": \"felaktig dos läkemedel\",\n  \"confidence\": 0.7,\n  \"rationale\": \"Det är en vanlig typ av felaktig insändning från vårdpersonal, särskilt inom sjuksköterskor\" \n}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "ticket-009",
+  "model": "llama3.2:3b",
+  "text": "Systemet hänger sig vid inloggning",
+  "reply": "{\"label\": \"behorighet\", \"confidence\": 0.8, \"rationale\": \"Inloggning av systemen är en kritisk funktion, och om den inte fungerar kan det upplevas som om systemet inte har behörighet att utföra sina uppgifter.\"}",
+  "expected_model_status": "ok",
+  "note": "model label behorighet != expected bugg"
+ },
+ {
+  "id": "ticket-010",
+  "model": "llama3.2:3b",
+  "text": "Felmeddelande errorkod visas",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.8, \"rationale\": \"Felmeddelandet indikerar en fehläshamling i journalet\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected bugg"
+ },
+ {
+  "id": "ticket-016",
+  "model": "llama3.2:3b",
+  "text": "Har en fråga om tillgängliga tjänster",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.4}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "ticket-021",
+  "model": "llama3.2:3b",
+  "text": "Kan inte komma åt systemet med telefon [telefon-maskat]",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.2, \"rationale\": \"Telefonnummer är förmodligen inte korrekt\"}",
+  "expected_model_status": "ok",
+  "note": "model label ovrigt != expected behorighet"
+ },
+ {
+  "id": "ticket-004",
+  "model": "qwen2.5:3b",
+  "text": "Saknar tillgång till journalfunktioner",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.9, \"rationale\": \"Ärende gäller saknad av tillgång till journalfunktioner, vilket ger anledning att anta att det finns ett problem med journalfunktioner.\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected behorighet"
+ },
+ {
+  "id": "ticket-007",
+  "model": "qwen2.5:3b",
+  "text": "Felaktig dos läkemedel noterade i journal",
+  "reply": "{\"label\": \"bugg\", \"confidence\": 0.95, \"rationale\": \"Texten anger ett felaktigt noterat läkemedelsskrift, vilket kan vara ett tekniskt fel i systemet som kan leda till att journalen inte visas korrekt.\"}",
+  "expected_model_status": "ok",
+  "note": "model label bugg != expected journalfel"
+ },
+ {
+  "id": "ticket-009",
+  "model": "qwen2.5:3b",
+  "text": "Systemet hänger sig vid inloggning",
+  "reply": "{\"label\": \"inloggning\", \"confidence\": 0.95, \"rationale\": \"Texten beroljes tydligt som en problem med inloggning, vilket är klassesupportärende för en Sverige klinik.\"}",
+  "expected_model_status": "ok",
+  "note": "model label inloggning != expected bugg"
+ },
+ {
+  "id": "ticket-014",
+  "model": "qwen2.5:3b",
+  "text": "Vad gör jag vid fel på min enhet?",
+  "reply": "{\"label\": \"ovrigt\", \"confidence\": 0.1, \"rationale\": \"Texten är fråga om handling vid fel på enheten, men inte specifika instruktioner finns. Det kan vara något som presenteras i ett annat sätt i supportappen.\"}",
+  "expected_model_status": "ok",
+  "note": "model label ovrigt != expected instruktion"
+ },
+ {
+  "id": "ticket-021",
+  "model": "qwen2.5:3b",
+  "text": "Kan inte komma åt systemet med telefon [telefon-maskat]",
+  "reply": "{\"label\": \"bugg\", \"confidence\": 0.9, \"rationale\": \"Den uppmanade texten visar att användaren har problem med att komma åt systemet, vilket är ett tekniskt bugg som kan vara oäkta på grund av ett problem med telefonens enhet eller app.\"}",
+  "expected_model_status": "ok",
+  "note": "model label bugg != expected behorighet"
+ },
+ {
+  "id": "ticket-022",
+  "model": "qwen2.5:3b",
+  "text": "E-post [epost-maskat] kan inte nås",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.9, \"rationale\": \"Felaktigt kommunikationskanal (e-post) för att behöva lösa problemet.\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected inloggning"
+ },
+ {
+  "id": "ticket-007",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Felaktig dos läkemedel noterade i journal",
+  "reply": null,
+  "expected_model_status": "abstain",
+  "note": null
+ },
+ {
+  "id": "ticket-009",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Systemet hänger sig vid inloggning",
+  "reply": "{\"label\": \"inloggning\", \"confidence\": 1, \"rationale\": \"Användaren har ett problem med att logga in.\"}",
+  "expected_model_status": "ok",
+  "note": "model label inloggning != expected bugg"
+ },
+ {
+  "id": "ticket-010",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Felmeddelande errorkod visas",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.8, \"rationale\": \"Felmeddelande om errorkod indikerar ett journalfel.\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected bugg"
+ },
+ {
+  "id": "ticket-013",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Instruktion för hur jag loggar in till SITHS",
+  "reply": "{\"label\": \"inloggning\", \"confidence\": 1, \"rationale\": \"Ärende handlar om hur man loggar in.\"}",
+  "expected_model_status": "ok",
+  "note": "model label inloggning != expected instruktion"
+ },
+ {
+  "id": "ticket-014",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Vad gör jag vid fel på min enhet?",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.7, \"rationale\": \"Användaren frågar om åtgärder för fel på enheten, vilket indikerar ett journalfel.\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected instruktion"
+ },
+ {
+  "id": "ticket-016",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Har en fråga om tillgängliga tjänster",
+  "reply": "{\"label\": \"instruktion\", \"confidence\": 0.8, \"rationale\": \"Fråga om tillgängliga tjänster utgör en begäran om instruktion om vilka tjänster som tillgängliggörs.\"}",
+  "expected_model_status": "ok",
+  "note": "model label instruktion != expected ovrigt"
+ },
+ {
+  "id": "ticket-020",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Buggrapport från [namn-maskat], personnummer [personnummer-maskat]",
+  "reply": "{\"label\": \"bugg\", \"confidence\": 1, \"rationingen\": \"Texten anger att det är en buggrapport.\"}",
+  "expected_model_status": "invalid_schema",
+  "note": null
+ },
+ {
+  "id": "ticket-021",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "Kan inte komma åt systemet med telefon [telefon-maskat]",
+  "reply": "{\"label\": \"inloggning\", \"confidence\": 1, \"rationale\": \"Användaren har problem med att komma åt systemet, vilket indikerar ett inloggningsefterlevnadss problem.\"}",
+  "expected_model_status": "ok",
+  "note": "model label inloggning != expected behorighet"
+ },
+ {
+  "id": "ticket-022",
+  "model": "qwen2.5:7b-instruct-q4",
+  "text": "E-post [epost-maskat] kan inte nås",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.8, \"rationale\": \"Felmeddelandet indikerar att det finns ett problem med att jOURNALISERA eller hantera e-postadressen.\"}",
+  "expected_model_status": "ok",
+  "note": "model label journalfel != expected inloggning"
+ }
+]

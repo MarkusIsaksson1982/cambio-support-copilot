@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "audit_event.v1.schema.json",
+  "title": "Audit event",
+  "description": "Append-only event emitted by copilot.core.audit.AuditLog; event-specific properties are open.",
+  "type": "object",
+  "required": ["audit_version", "ts", "event", "request_id"],
+  "properties": {
+    "audit_version": {"type": "string", "const": "1.0.0"},
+    "ts": {"type": "string", "format": "date-time"},
+    "event": {"type": "string", "minLength": 1},
+    "request_id": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

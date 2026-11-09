@@ -1,0 +1,19 @@
+[project]
+name = "cambio-support-copilot"
+version = "0.1.0"
+description = "Swedish support copilot demo: pluggable, fail-closed pipeline (synthetic data only)"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+api = ["fastapi>=0.110", "httpx", "uvicorn>=0.27"]
+dev = ["pytest>=8", "fastapi>=0.110", "httpx", "uvicorn>=0.27"]
+
+[project.scripts]
+copilot = "copilot.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["copilot*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

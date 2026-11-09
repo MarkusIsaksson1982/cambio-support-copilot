@@ -1,0 +1,18 @@
+[
+ {
+  "id": "codex:T-008",
+  "model": "qwen2.5:7b-instruct-q4",
+  "category": "incident",
+  "kb_covers": true,
+  "raw_reply": "{\"reply\": \"Det verkar som att detta är ett visst visningsfel och inte en allvarlig patientsäkerhetsincident. För att utreda detta kan ni följa dessa steg: 1) Kontrollera att profiluppgifterna för testpatienten är korrekt inmatade och att allergivarningen är korrekt ansluten till rätt patient. 2) Testa att logga in som en annan användare för att se om problemet är begränsat till en specifik användare. 3) Kontakta integrationsansvarig för att se om det finns några integrationsproblemen som kan orsaka detta. 4) Om problemet fortfarande finns, skapa ett ärende till IT-supporten med detaljerade information om patienten och tidpunkten för problemet.\", \"citation\": null, \"abstain\": true}",
+  "verdict": "wrong_abstain"
+ },
+ {
+  "id": "opencode-glm-5.3-flash-free:T-005",
+  "model": "qwen2.5:7b-instruct-q4",
+  "category": "prescription",
+  "kb_covers": false,
+  "raw_reply": "{\"reply\": \"Hej Dr Söderberg, det verkar som att det kan ha uppkommit ett systemfel som spärrar förskrivningarna för denna specifika patient. Vi rekommenderar att du kontakter IT-supporten för att få hjälp med att diagnosera och lösa problemet. De kan se till att det inte finns några systembaserade begränsningar för patienten och se till att alla relevanta information är korrekt uppdaterad. Tack för ditt utsiktsfulla samarbete.\", \"citation\": \"groc-build:KB-003\"}",
+  "verdict": "invented_id"
+ }
+]

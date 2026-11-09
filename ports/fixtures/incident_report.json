@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "what": "",
+  "when": "",
+  "where": "",
+  "harm": "okand",
+  "immediate_action": "",
+  "confidence": 0.0,
+  "status": "not_implemented",
+  "source_request_id": "ticket-017",
+  "route": "patientsakerhet"
+}

@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+audit*.jsonl
+bin/
+obj/
+target/
+node_modules/
+dist/

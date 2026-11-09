@@ -1,0 +1,43 @@
+{
+  "contract_version": "1.0.0",
+  "request_id": "ticket-001",
+  "request_type": "support_ticket",
+  "plugin_version": "0.1.0",
+  "status": "awaiting_approval",
+  "handoff_reasons": [],
+  "route": "forsta_linjen",
+  "masked_text": "Jag kan inte logga in till SITHS-systemet",
+  "masked_categories": [],
+  "rule": {
+    "label": "inloggning",
+    "confidence": 0.85,
+    "hits": [
+      {
+        "label": "inloggning",
+        "phrase": "logga in",
+        "weight": 2
+      },
+      {
+        "label": "inloggning",
+        "phrase": "siths",
+        "weight": 3
+      }
+    ]
+  },
+  "model": {
+    "adapter": "none",
+    "status": "skipped"
+  },
+  "output": {
+    "label": "inloggning",
+    "label_display": "Inloggning / SITHS",
+    "confidence": 0.85,
+    "source": "rules",
+    "route": "forsta_linjen",
+    "rationale": "regelträffar",
+    "reply_draft": "Hej! Tack för ditt ärende. Logga ut, ta ut och sätt i SITHS-kortet igen och starta om klienten. [KB-101] Hälsningar, Support",
+    "citations": [
+      "KB-101"
+    ]
+  }
+}

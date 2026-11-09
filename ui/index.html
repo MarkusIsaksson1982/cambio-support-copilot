@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supportcopilot — syntetisk demo</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --paper: #fffdf8;
+      --ink: #1c1915;
+      --muted: #5e584e;
+      --line: #e2d9cc;
+      --teal: #0f3d4c;
+      --amber: #8a5a00;
+      --amber-bg: #fff4d6;
+      --red: #8c2f2f;
+      --red-bg: #fdeceb;
+      --green: #1d5c45;
+      --green-bg: #e7f6ef;
+      --mark: #f3e2a4;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.45 "Segoe UI", system-ui, sans-serif;
+    }
+    header, main, footer { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+    header { padding-top: 20px; }
+    h1 { font-size: 1.6rem; margin: 0 0 4px; color: var(--teal); }
+    h2 { font-size: 1rem; margin: 0 0 8px; }
+    p { margin: 0 0 8px; }
+    .lede { color: var(--muted); max-width: 46rem; }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 320px) minmax(0, 1fr) minmax(220px, 280px);
+      gap: 14px;
+      padding: 14px 0 24px;
+    }
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+    textarea, input[type="text"] {
+      width: 100%;
+      font: inherit;
+      color: inherit;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+    button, .mode {
+      font: inherit;
+      border-radius: 8px;
+      border: 1px solid var(--teal);
+      background: #fff;
+      color: var(--teal);
+      padding: 7px 10px;
+      cursor: pointer;
+    }
+    button.primary { background: var(--teal); color: #fff; }
+    button:disabled { opacity: 0.45; cursor: not-allowed; }
+    button.danger { border-color: var(--red); color: var(--red); }
+    .examples button { font-size: 0.92rem; }
+    .pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    .pill.awaiting_approval { background: var(--amber-bg); color: var(--amber); }
+    .pill.handoff { background: var(--red-bg); color: var(--red); }
+    .pill.sent, .pill.human_owned, .pill.rejected { background: var(--green-bg); color: var(--green); }
+    .banner {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
+    .banner[hidden], .card [hidden] { display: none; }
+    pre, .draft {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px;
+      max-height: 240px;
+      overflow: auto;
+      margin: 0;
+    }
+    mark { background: var(--mark); }
+    ul { margin: 4px 0 8px; padding-left: 1.1rem; }
+    .muted { color: var(--muted); font-size: 0.92rem; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { text-align: left; vertical-align: top; padding: 4px 4px 4px 0; border-bottom: 1px solid var(--line); }
+    footer { color: var(--muted); font-size: 0.85rem; padding-bottom: 24px; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Supportcopilot</h1>
+    <p class="lede">Syntetiska ärenden, formulerade som från vårdpersonal. Inget skickas utan ett mänskligt beslut. Adapter: none. En levande modell är inte med.</p>
+  </header>
+  <main class="layout">
+    <section class="card" aria-label="Ärende">
+      <h2>Ärende</h2>
+      <div class="row" role="radiogroup" aria-label="Läge">
+        <button type="button" class="mode" id="mode-live" aria-pressed="true">Live</button>
+        <button type="button" class="mode" id="mode-inspelat" aria-pressed="false">Inspelat</button>
+      </div>
+      <p class="muted" id="mode-help">Live kör mot den här servern, adapter none.</p>
+      <label for="ticket">Text</label>
+      <textarea id="ticket" placeholder="Klistra in ett syntetiskt ärende, eller välj ett exempel."></textarea>
+      <div class="row examples" id="examples">
+        <button type="button" data-example="ticket-001">SITHS-inloggning</button>
+        <button type="button" data-example="ticket-008">Sparknapp kraschar</button>
+        <button type="button" data-example="G-001">Patientdata</button>
+        <button type="button" data-example="G-008">Ingen träff i kunskapsbasen</button>
+      </div>
+      <button type="button" class="primary" id="run">Kör</button>
+    </section>
+
+    <section class="card" aria-label="Resultat">
+      <h2>Resultat</h2>
+      <div class="banner" id="banner" hidden></div>
+      <p id="empty" class="muted">Inget ärende kört ännu.</p>
+      <div id="result" hidden>
+        <p><span class="pill" id="status-pill"></span> <span id="status-sv"></span></p>
+        <p><strong>Etikett</strong> <span id="label"></span></p>
+        <h2>Maskerad text</h2>
+        <pre id="masked"></pre>
+        <h2>Utkast</h2>
+        <div class="draft" id="draft"></div>
+        <h2>Källor</h2>
+        <ul id="citations"></ul>
+        <h2>Varför en människa</h2>
+        <ul id="reasons"></ul>
+        <label for="reviewer">Granskare</label>
+        <input id="reviewer" type="text" value="granskare-1" autocomplete="name">
+        <div class="row">
+          <button type="button" class="primary" id="approve">Godkänn</button>
+          <button type="button" class="danger" id="reject">Avvisa</button>
+          <button type="button" id="takeover">Ta över</button>
+        </div>
+        <label for="edited">Redigerat svar</label>
+        <textarea id="edited" placeholder="Krävs för Redigera och skicka."></textarea>
+        <div class="row">
+          <button type="button" id="edit">Redigera och skicka</button>
+        </div>
+        <p class="muted" id="decision-note"></p>
+        <h2>Audit</h2>
+        <ul id="audit"></ul>
+      </div>
+    </section>
+
+    <aside class="card" aria-label="Offline-utvärdering">
+      <h2>Offline-utvärdering</h2>
+      <p class="muted">Adapter none, 44 ärenden, 3 upprepningar. A live model is not in these numbers.</p>
+      <table>
+        <tbody>
+          <tr><th>Schema</th><td>100%</td></tr>
+          <tr><th>Audit match</th><td>100%</td></tr>
+          <tr><th>Handoff</th><td>88.6% (39 of 44)</td></tr>
+          <tr><th>Väntar</th><td>5</td></tr>
+          <tr><th>Patientdata</th><td>100% of 8</td></tr>
+          <tr><th>needs_human</th><td>100% of 8</td></tr>
+          <tr><th>Träffar</th><td>13 of 44</td></tr>
+          <tr><th>Trohet</th><td>100% of 12 cited drafts</td></tr>
+          <tr><th>Recall</th><td>100% of 12 retrieved, non-journalfel tickets</td></tr>
+          <tr><th>Avvikelsekedja</th><td>100% of 4</td></tr>
+          <tr><th>Upprepning</th><td>0 avvikelser</td></tr>
+        </tbody>
+      </table>
+      <p class="muted" id="eval-source">Siffrorna är inbakade från docs/EVAL-2026-11-08.md.</p>
+    </aside>
+  </main>
+  <footer>Syntetisk data. Inget skickas automatiskt. Inspelat läge läser ui/examples.json och skickar inget beslut.</footer>
+  <script>
+    const STATUS_SV = {
+      awaiting_approval: "Väntar på godkännande",
+      handoff: "Överlämning till människa",
+      sent: "Skickat efter beslut",
+      rejected: "Avvisat",
+      human_owned: "En människa äger ärendet"
+    };
+    const REASON_SV = {
+      patient_data_detected: "Patientdata hittades.",
+      model_abstained: "Ingen modell svarade.",
+      low_confidence: "För låg säkerhet.",
+      no_grounded_draft: "Inget grundat utkast.",
+      model_proposal_needs_review: "Modellförslag måste granskas.",
+      model_output_invalid: "Modellens svar följde inte schemat.",
+      journal_error_needs_incident_report: "Journalfel ska bli en avvikelserapport."
+    };
+
+    const els = {};
+    for (const id of ["mode-live", "mode-inspelat", "mode-help", "ticket", "examples", "run",
+      "banner", "empty", "result", "status-pill", "status-sv", "label", "masked", "draft",
+      "citations", "reasons", "reviewer", "approve", "reject", "takeover", "edited", "edit",
+      "decision-note", "audit", "eval-source"]) {
+      els[id] = document.getElementById(id);
+    }
+
+    let mode = "live";
+    let examples = [];
+    let view = null;
+    let decided = false;
+
+    function godkannEnabled(status, reviewer) {
+      return status === "awaiting_approval" && reviewer.trim().length > 0;
+    }
+
+    function editEnabled(reviewer, edited, reasons) {
+      return reviewer.trim().length > 0 && edited.trim().length > 0
+        && !reasons.includes("patient_data_detected");
+    }
+
+    function setMode(next) {
+      mode = next;
+      els["mode-live"].setAttribute("aria-pressed", String(mode === "live"));
+      els["mode-inspelat"].setAttribute("aria-pressed", String(mode === "inspelat"));
+      els["mode-help"].textContent = mode === "live"
+        ? "Live kör mot den här servern, adapter none."
+        : "Inspelat visar frysta fält och skickar inget beslut.";
+      if (mode === "inspelat") showFrozen(els.ticket.value);
+      else clearResult("Tryck Kör för att köra live.");
+    }
+
+    function clearResult(message) {
+      view = null;
+      decided = false;
+      els.result.hidden = true;
+      els.empty.hidden = false;
+      els.empty.textContent = message;
+      els["decision-note"].textContent = "";
+      syncButtons();
+    }
+
+    function fillMasked(node, text) {
+      node.textContent = "";
+      const re = /\[[^\[\]\n]{1,80}\]/g;
+      let last = 0;
+      for (const match of text.matchAll(re)) {
+        node.append(document.createTextNode(text.slice(last, match.index)));
+        const mark = document.createElement("mark");
+        mark.textContent = match[0];
+        node.append(mark);
+        last = match.index + match[0].length;
+      }
+      node.append(document.createTextNode(text.slice(last)));
+    }
+
+    function render(next) {
+      view = next;
+      decided = false;
+      els.edited.value = "";
+      els.empty.hidden = true;
+      els.result.hidden = false;
+      els["status-pill"].className = "pill " + next.status;
+      els["status-pill"].textContent = next.status;
+      els["status-sv"].textContent = STATUS_SV[next.status] || "";
+      els.label.textContent = next.label || "—";
+      fillMasked(els.masked, next.masked || "");
+      els.draft.textContent = next.draft ? next.draft : "Inget utkast.";
+      fillList(els.citations, next.citations, "Ingen källa.");
+      fillList(els.reasons, (next.reasons || []).map((reason) => {
+        const gloss = REASON_SV[reason];
+        return gloss ? reason + " — " + gloss : reason;
+      }), "Inget extra skäl. En människa godkänner ändå.");
+      els["decision-note"].textContent = next.reasons && next.reasons.includes("patient_data_detected")
+        ? "Patientdata lämnas inte som ett skickat svar. Ta över ärendet."
+        : "";
+      syncButtons();
+    }
+
+    function fillList(node, items, empty) {
+      node.textContent = "";
+      if (!items.length) {
+        const li = document.createElement("li");
+        li.textContent = empty;
+        node.append(li);
+        return;
+      }
+      for (const item of items) {
+        const li = document.createElement("li");
+        li.textContent = item;
+        node.append(li);
+      }
+    }
+
+    function syncButtons() {
+      if (!view || decided) {
+        els.approve.disabled = true;
+        els.reject.disabled = true;
+        els.takeover.disabled = true;
+        els.edit.disabled = true;
+        return;
+      }
+      const reviewer = els.reviewer.value;
+      const reasons = view.reasons || [];
+      els.approve.disabled = !godkannEnabled(view.status, reviewer);
+      els.reject.disabled = reviewer.trim().length === 0;
+      els.takeover.disabled = reviewer.trim().length === 0;
+      els.edit.disabled = !editEnabled(reviewer, els.edited.value, reasons);
+    }
+
+    function viewFromEnvelope(env) {
+      const output = env.output || {};
+      return {
+        status: env.status,
+        reasons: env.handoff_reasons || [],
+        masked: env.masked_text || "",
+        label: output.label_display || output.label || "",
+        draft: output.reply_draft || "",
+        citations: output.citations || [],
+        requestId: env.request_id
+      };
+    }
+
+    function viewFromExample(example) {
+      const frozen = example.frozen;
+      return {
+        status: frozen.status,
+        reasons: frozen.handoff_reasons || [],
+        masked: frozen.masked_text || "",
+        label: frozen.label_display || frozen.label || "",
+        draft: frozen.reply_draft || "",
+        citations: frozen.citations || [],
+        requestId: null
+      };
+    }
+
+    function matchingExample(text) {
+      const wanted = text.trim();
+      return examples.find((example) => example.text.trim() === wanted) || null;
+    }
+
+    function showFrozen(text) {
+      const example = matchingExample(text);
+      if (!example) {
+        clearResult("Texten finns inte bland de fyra frysta exemplen.");
+        return;
+      }
+      render(viewFromExample(example));
+      els.audit.textContent = "";
+      const li = document.createElement("li");
+      li.textContent = "Inspelat läge. Ingen auditrad skrevs.";
+      els.audit.append(li);
+    }
+
+    async function runLive() {
+      els.banner.hidden = true;
+      try {
+        const response = await fetch("/requests", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "support_ticket", text: els.ticket.value })
+        });
+        if (!response.ok) {
+          recover();
+          return;
+        }
+        const env = await response.json();
+        render(viewFromEnvelope(env));
+        await loadAudit(env.request_id);
+      } catch (error) {
+        recover();
+      }
+    }
+
+    function recover() {
+      mode = "inspelat";
+      els["mode-live"].setAttribute("aria-pressed", "false");
+      els["mode-inspelat"].setAttribute("aria-pressed", "true");
+      els["mode-help"].textContent = "Inspelat visar frysta fält och skickar inget beslut.";
+      els.banner.hidden = false;
+      els.banner.textContent = "Servern svarade inte. Visar inspelat läge om texten är ett av de fyra exemplen.";
+      showFrozen(els.ticket.value);
+    }
+
+    async function loadAudit(requestId) {
+      els.audit.textContent = "";
+      try {
+        const response = await fetch("/audit/" + requestId);
+        if (!response.ok) return;
+        const events = await response.json();
+        for (const event of events) {
+          const li = document.createElement("li");
+          li.textContent = event.event;
+          els.audit.append(li);
+        }
+      } catch (error) {
+        const li = document.createElement("li");
+        li.textContent = "Auditen gick inte att läsa.";
+        els.audit.append(li);
+      }
+    }
+
+    async function decide(decision) {
+      if (mode !== "live" || !view || !view.requestId) {
+        els["decision-note"].textContent = "Inspelat läge skickar inget beslut.";
+        return;
+      }
+      const body = {
+        reviewer: els.reviewer.value.trim(),
+        decision: decision,
+        edited_reply: decision === "edit" ? els.edited.value : null
+      };
+      let response;
+      try {
+        response = await fetch("/requests/" + view.requestId + "/decision", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+      } catch (error) {
+        els["decision-note"].textContent = "Servern svarade inte. Inget beslut skickades.";
+        return;
+      }
+      let payload;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        els["decision-note"].textContent = "Servern svarade inte med JSON. Inget beslut gick att läsa.";
+        return;
+      }
+      if (!response.ok) {
+        els["decision-note"].textContent = payload.detail || "Beslutet avvisades.";
+        return;
+      }
+      decided = true;
+      view.status = payload.final_state;
+      els["status-pill"].className = "pill " + payload.final_state;
+      els["status-pill"].textContent = payload.final_state;
+      els["status-sv"].textContent = STATUS_SV[payload.final_state] || "";
+      els["decision-note"].textContent = "Beslutet är sparat i auditen. Inget skickades automatiskt.";
+      syncButtons();
+      await loadAudit(view.requestId);
+    }
+
+    els["mode-live"].addEventListener("click", () => setMode("live"));
+    els["mode-inspelat"].addEventListener("click", () => setMode("inspelat"));
+    els.examples.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-example]");
+      if (!button) return;
+      const example = examples.find((item) => item.id === button.dataset.example);
+      if (!example) return;
+      els.ticket.value = example.text;
+      if (mode === "inspelat") showFrozen(example.text);
+    });
+    els.run.addEventListener("click", () => {
+      if (mode === "inspelat") showFrozen(els.ticket.value);
+      else runLive();
+    });
+    els.ticket.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) els.run.click();
+    });
+    els.approve.addEventListener("click", () => decide("approve"));
+    els.reject.addEventListener("click", () => decide("reject"));
+    els.takeover.addEventListener("click", () => decide("take_over"));
+    els.edit.addEventListener("click", () => decide("edit"));
+    els.reviewer.addEventListener("input", syncButtons);
+    els.edited.addEventListener("input", syncButtons);
+
+    syncButtons();
+
+    fetch("/ui/examples.json").then((response) => response.json()).then((data) => {
+      examples = data;
+    }).catch(() => {
+      els.banner.hidden = false;
+      els.banner.textContent = "Exemplen gick inte att läsa. Live kan ändå köras om servern svarar.";
+    });
+
+    fetch("/ui/eval.json").then((response) => response.json()).then((data) => {
+      if (data && data.live_model === false && data.adapter === "none") {
+        els["eval-source"].textContent = "Siffrorna är lästa från ui/eval.json. " + (data.note || "");
+      }
+    }).catch(() => {});
+  </script>
+</body>
+</html>

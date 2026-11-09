@@ -1,0 +1,14 @@
+[
+ {"id": "invented-span", "kind": "pii_span", "source": "qwen2.5:3b, prep/local-models/results/qwen2.5_3b.json grok-build:T-005",
+  "text": "I förskrivningsmodulen sparar jag en ordination och när vyn laddas om står det 50 mg i stället för 5 mg på beredningsraden. Det gäller testpatienten Astrid Holmgren, 19740312-4821, i demokliniken Solbacken. Receptet är inte skickat till något apotek, det ligger bara som utkast i test. Samma sak hände med tabletter men inte med mixtur. Kan ni återskapa och skicka till utveckling?",
+  "entities": [{"text": "22-4821", "type": "personnummer"}, {"text": "demokliniken Solbacken", "type": "epost"}, {"text": "receptet", "type": "id"}],
+  "expect_rejected": ["22-4821", "receptet"], "expect_status": "handoff"},
+ {"id": "med-incident", "kind": "classify", "source": "llama3.2:3b labels medication tickets as incident (5/5)",
+  "text": "I förskrivningsmodulen sparar jag en ordination och när vyn laddas om står det 50 mg i stället för 5 mg på beredningsraden. Samma sak hände med tabletter men inte med mixtur. Kan ni återskapa och skicka till utveckling?",
+  "reply": "{\"label\": \"journalfel\", \"confidence\": 0.9, \"rationale\": \"Felaktig dos i ordination\"}",
+  "expect_status": "handoff", "expect_reasons": ["model_proposal_needs_review", "journal_error_needs_incident_report"]},
+ {"id": "wrong-label", "kind": "classify", "source": "schema-valid but wrong label: login problem proposed as bugg",
+  "text": "Jag kommer inte in i systemet sedan i morse, sidan bara laddar om när jag klickat på knappen. Kollegorna på avdelningen kommer in.",
+  "reply": "{\"label\": \"bugg\", \"confidence\": 0.95, \"rationale\": \"Sidan laddar om\"}",
+  "expect_status": "handoff", "expect_reasons": ["model_proposal_needs_review"]}
+]

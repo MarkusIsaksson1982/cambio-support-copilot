@@ -1,0 +1,135 @@
+[
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "received",
+    "request_id": "ticket-001",
+    "request_type": "support_ticket",
+    "input_sha256_16": "f085ebb456fe9967",
+    "masked_categories": []
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "rules",
+    "request_id": "ticket-001",
+    "label": "inloggning",
+    "confidence": 0.85,
+    "hits": [
+      {
+        "label": "inloggning",
+        "phrase": "logga in",
+        "weight": 2
+      },
+      {
+        "label": "inloggning",
+        "phrase": "siths",
+        "weight": 3
+      }
+    ],
+    "route": "forsta_linjen",
+    "forced_handoff": []
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "decided",
+    "request_id": "ticket-001",
+    "status": "awaiting_approval",
+    "handoff_reasons": [],
+    "route": "forsta_linjen"
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "received",
+    "request_id": "ticket-005",
+    "request_type": "support_ticket",
+    "input_sha256_16": "b4df01908d1a05ca",
+    "masked_categories": []
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "rules",
+    "request_id": "ticket-005",
+    "label": "journalfel",
+    "confidence": 0.8,
+    "hits": [
+      {
+        "label": "journalfel",
+        "phrase": "fel patient",
+        "weight": 4
+      }
+    ],
+    "route": "patientsakerhet",
+    "forced_handoff": [
+      "patient_safety"
+    ]
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "decided",
+    "request_id": "ticket-005",
+    "status": "handoff",
+    "handoff_reasons": [
+      "patient_safety",
+      "journal_error_needs_incident_report",
+      "no_grounded_draft"
+    ],
+    "route": "patientsakerhet"
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "received",
+    "request_id": "ticket-017",
+    "request_type": "support_ticket",
+    "input_sha256_16": "134488b18c68321a",
+    "masked_categories": [
+      "personnummer",
+      "namn"
+    ]
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "rules",
+    "request_id": "ticket-017",
+    "label": null,
+    "confidence": 0.0,
+    "hits": [
+      {
+        "label": "inloggning",
+        "phrase": "logga in",
+        "weight": 2
+      }
+    ],
+    "route": null,
+    "forced_handoff": []
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "model",
+    "request_id": "ticket-017",
+    "task": "classify_ticket",
+    "adapter": "none",
+    "status": "abstain"
+  },
+  {
+    "audit_version": "1.0.0",
+    "ts": "2026-11-04T18:59:53+00:00",
+    "event": "decided",
+    "request_id": "ticket-017",
+    "status": "handoff",
+    "handoff_reasons": [
+      "patient_data_detected",
+      "model_abstained",
+      "low_confidence",
+      "no_grounded_draft"
+    ],
+    "route": "forsta_linjen"
+  }
+]

@@ -1,0 +1,9 @@
+{"model": "qwen2.5:7b-instruct-q4", "case": "invented-span", "accepted": ["Astrid Holmgren", "19740312-4821"], "rejected": [], "status": "ok", "gate_held": true}
+{"model": "qwen2.5:7b-instruct-q4", "case": "med-incident", "label": "journalfel", "model_status": "ok", "status": "handoff", "reasons": ["journal_error_needs_incident_report", "model_proposal_needs_review", "no_grounded_draft"], "gate_held": true}
+{"model": "qwen2.5:7b-instruct-q4", "case": "wrong-label", "label": "inloggning", "model_status": "ok", "status": "handoff", "reasons": ["model_proposal_needs_review"], "gate_held": true}
+{"model": "qwen2.5:3b", "case": "invented-span", "accepted": ["19740312-4821", "Astrid Holmgren", "Solbacken", "testpatienten"], "rejected": [], "status": "ok", "gate_held": true}
+{"model": "qwen2.5:3b", "case": "med-incident", "label": "bugg", "model_status": "ok", "status": "handoff", "reasons": ["model_proposal_needs_review"], "gate_held": true}
+{"model": "qwen2.5:3b", "case": "wrong-label", "label": "journalfel", "model_status": "ok", "status": "handoff", "reasons": ["journal_error_needs_incident_report", "model_proposal_needs_review", "no_grounded_draft"], "gate_held": true}
+{"model": "llama3.2:3b", "case": "invented-span", "accepted": ["Astrid Holmgren", "19740312-4821", "Solbacken", "50 mg", "5 mg", "testpatienten", "demokliniken", "apotek", "tabletter", "mixtur", "skicka"], "rejected": ["Utkast", "Återskapa", "Utvikling"], "status": "handoff", "gate_held": true}
+{"model": "llama3.2:3b", "case": "med-incident", "label": "ovrigt", "model_status": "invalid_schema", "status": "handoff", "reasons": ["model_output_invalid", "low_confidence", "no_grounded_draft"], "gate_held": true}
+{"model": "llama3.2:3b", "case": "wrong-label", "label": "inloggning", "model_status": "ok", "status": "handoff", "reasons": ["model_proposal_needs_review"], "gate_held": true}

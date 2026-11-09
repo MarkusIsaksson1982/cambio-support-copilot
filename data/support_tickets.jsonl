@@ -1,0 +1,30 @@
+{"id": "ticket-001", "text": "Jag kan inte logga in till SITHS-systemet", "expected_label": "inloggning", "expected_status": "awaiting_approval"}
+{"id": "ticket-002", "text": "Jag har glömt mitt pinkod till e-tjänsten", "expected_label": "inloggning", "expected_status": "handoff"}
+{"id": "ticket-003", "text": "Behörighet att komma åt patientsystemet nekas", "expected_label": "behorighet", "expected_status": "handoff"}
+{"id": "ticket-004", "text": "Saknar tillgång till journalfunktioner", "expected_label": "behorighet", "expected_status": "handoff"}
+{"id": "ticket-005", "text": "Fel i patientjournalen, fel patient skriven", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-006", "text": "Förväxlning mellan två patienter i journalen", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-007", "text": "Felaktig dos läkemedel noterade i journal", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-008", "text": "Krasch när jag trycker på spara-knappen", "expected_label": "bugg", "expected_status": "awaiting_approval"}
+{"id": "ticket-009", "text": "Systemet hänger sig vid inloggning", "expected_label": "bugg", "expected_status": "handoff"}
+{"id": "ticket-010", "text": "Felmeddelande errorkod visas", "expected_label": "bugg", "expected_status": "handoff"}
+{"id": "ticket-011", "text": "Hur gör jag för att boka tid?", "expected_label": "instruktion", "expected_status": "handoff"}
+{"id": "ticket-012", "text": "Var hittar jag snabbguiden?", "expected_label": "instruktion", "expected_status": "handoff"}
+{"id": "ticket-013", "text": "Instruktion för hur jag loggar in till SITHS", "expected_label": "instruktion", "expected_status": "handoff"}
+{"id": "ticket-014", "text": "Vad gör jag vid fel på min enhet?", "expected_label": "instruktion", "expected_status": "handoff"}
+{"id": "ticket-015", "text": "Övrigt ärende som inte passar in i andra kategorier", "expected_label": "ovrigt", "expected_status": "handoff"}
+{"id": "ticket-016", "text": "Har en fråga om tillgängliga tjänster", "expected_label": "ovrigt", "expected_status": "handoff"}
+{"id": "ticket-017", "text": "Anna Svensson, personnummer 19121212-1212, kan inte logga in", "expected_label": "inloggning", "expected_status": "handoff"}
+{"id": "ticket-018", "text": "Erik Lindqvist, personnummer 811218-9876, behörighet begärd", "expected_label": "behorighet", "expected_status": "handoff"}
+{"id": "ticket-019", "text": "Journalfel vid Anna Svensson, personnummer 19121212-1212", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-020", "text": "Buggrapport från Erik Lindqvist, personnummer 811218-9876", "expected_label": "bugg", "expected_status": "handoff"}
+{"id": "ticket-021", "text": "Kan inte komma åt systemet med telefon 070-174 06 05", "expected_label": "behorighet", "expected_status": "handoff"}
+{"id": "ticket-022", "text": "E-post support@example.se kan inte nås", "expected_label": "inloggning", "expected_status": "handoff"}
+{"id": "ticket-023", "text": "Fel patient Johan Andersson fel i journal", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-024", "text": "Krasch och avbrott under pågående session", "expected_label": "bugg", "expected_status": "handoff"}
+{"id": "ticket-025", "text": "Hur återställer jag lösenordet för bankid?", "expected_label": "inloggning", "expected_status": "awaiting_approval"}
+{"id": "ticket-026", "text": "Behörighetsfråga angående Anna Svensson", "expected_label": "behorighet", "expected_status": "handoff"}
+{"id": "ticket-027", "text": "Fel i journalposten för patienter", "expected_label": "journalfel", "expected_status": "handoff"}
+{"id": "ticket-028", "text": "Hur använder jag SITHS-verktyget korrekt", "expected_label": "instruktion", "expected_status": "awaiting_approval"}
+{"id": "ticket-029", "text": "Övrigt ärende okänt", "expected_label": "ovrigt", "expected_status": "handoff"}
+{"id": "ticket-030", "text": "Tack för hjälpen med min förfrågan", "expected_label": "ovrigt", "expected_status": "handoff"}

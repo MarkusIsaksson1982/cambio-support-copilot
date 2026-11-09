@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "request.v1.schema.json",
+  "title": "Copilot request",
+  "description": "Input envelope accepted by copilot.core.pipeline.run.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "text"],
+  "properties": {
+    "type": {"type": "string", "minLength": 1},
+    "text": {"type": "string"},
+    "id": {"type": "string", "minLength": 1}
+  }
+}
