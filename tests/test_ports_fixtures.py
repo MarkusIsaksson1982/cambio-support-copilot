@@ -34,3 +34,14 @@ def test_shared_fixtures_validate_against_ports_schemas():
     for event in events:
         _validate(event, "audit_event.v1.schema.json")
     _validate(json.loads((FIXTURES / "incident_report.json").read_text()), "incident_report.v1.schema.json")
+
+def test_incident_fixtures_match_the_live_plugin_not_a_stub():
+    report = json.loads((FIXTURES / "incident_report.json").read_text())
+    result = json.loads((FIXTURES / "incident_result.json").read_text())
+    assert report["status"] == "draft"
+    assert result["report"]["status"] == "draft"
+    assert "not_implemented" not in result["handoff_reasons"]
+    assert result["status"] == "handoff"
+    assert "incident_always_human" in result["handoff_reasons"]
+    assert result["report"]["source_request_id"] == "ticket-017"
+

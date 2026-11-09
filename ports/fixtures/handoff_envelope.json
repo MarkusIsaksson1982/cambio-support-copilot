@@ -35,9 +35,9 @@
     "source": "rules",
     "route": "forsta_linjen",
     "rationale": "regelträffar",
-    "reply_draft": "Hej! Tack för ditt ärende. Logga ut, ta ut och sätt i SITHS-kortet igen och starta om klienten. [KB-101] Hälsningar, Support",
+    "reply_draft": "Återställ behörighet efter byte av klinik eller enhet\nSyfte: hjälpa användare som får nekad inloggning efter att ha bytt klinik, enhet eller roll. Kontrollera först att SITHS-kortet fungerar i ett annat system och att datorns klocka är korrekt.\nSteg 1: Be användaren logga ut helt och starta om webbläsaren.\nSteg 2: Kontrollera i behörighetsportalen att användarens roll och enhet är uppdaterade.\nSteg 3: Ta bort gamla enhetskopplingar som ligger kvar från tidigare klinik.\nSteg 4: Låt användaren logga in igen och verifiera att rätt vårdcentral visas i välkomstfönstret.\nSteg 5: Om felet kvarstår, skapa ett ärende till IT-supporten med användarens namn, användar-ID, tidpunkt och exakt felmeddelande.\nSteg 6: Dokumentera vilka behörigheter som ändrats i ärendet. Skicka aldrig kortets PIN-kod eller lösenord i ärendet.",
     "citations": [
-      "KB-101"
+      "opencode-deepseek-v4.1-flash-free:KB-001"
     ]
   }
 }

@@ -7,16 +7,18 @@
     "harm": "okand",
     "immediate_action": "",
     "confidence": 0.0,
-    "status": "not_implemented",
-    "source_request_id": "ticket-017",
-    "route": "patientsakerhet"
+    "status": "draft",
+    "route": "patientsakerhet",
+    "source_request_id": "ticket-017"
   },
   "report_errors": [],
   "status": "handoff",
   "handoff_reasons": [
     "incident_always_human",
+    "model_abstained",
     "low_confidence",
-    "not_implemented",
+    "incident_what_empty",
+    "incident_harm_needs_review",
     "upstream_patient_data"
   ]
 }

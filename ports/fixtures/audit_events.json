@@ -1,7 +1,7 @@
 [
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "received",
     "request_id": "ticket-001",
     "request_type": "support_ticket",
@@ -10,7 +10,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "rules",
     "request_id": "ticket-001",
     "label": "inloggning",
@@ -32,7 +32,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "decided",
     "request_id": "ticket-001",
     "status": "awaiting_approval",
@@ -41,7 +41,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "received",
     "request_id": "ticket-005",
     "request_type": "support_ticket",
@@ -50,7 +50,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "rules",
     "request_id": "ticket-005",
     "label": "journalfel",
@@ -69,7 +69,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "decided",
     "request_id": "ticket-005",
     "status": "handoff",
@@ -82,7 +82,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "received",
     "request_id": "ticket-017",
     "request_type": "support_ticket",
@@ -94,7 +94,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "rules",
     "request_id": "ticket-017",
     "label": null,
@@ -111,7 +111,7 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "model",
     "request_id": "ticket-017",
     "task": "classify_ticket",
@@ -120,15 +120,14 @@
   },
   {
     "audit_version": "1.0.0",
-    "ts": "2026-11-04T18:59:53+00:00",
+    "ts": "2026-11-09T21:53:58+00:00",
     "event": "decided",
     "request_id": "ticket-017",
     "status": "handoff",
     "handoff_reasons": [
       "patient_data_detected",
       "model_abstained",
-      "low_confidence",
-      "no_grounded_draft"
+      "low_confidence"
     ],
     "route": "forsta_linjen"
   }
