@@ -91,6 +91,16 @@ _NAMN_FORE_ID = re.compile(
     r"(?:\(\s*(?:pnr|personnummer)\s+|(?:pnr|personnummer)\s+)?"
     + _PNR_SHAPE)
 _NAME_TOKEN = re.compile(_NAME_WORD)
+# Staff signature "/Mikael", "/Astrid Holmgren" or "/Anna Maria Svensson".
+# Gazetteer-only on the first given name so "/UL" stays put. Up to two
+# following name words avoid cutting through a longer name. Trailing
+# comma, semicolon, colon or period is allowed; "patient X-ray" is not
+# handled here.
+_SIGNATUR_NAMN = re.compile(
+    r"(?<![\w-])\/(" + _NAME_WORD + r"(?:\s+" + _NAME_WORD + r"){0,2})(?=[,;:.!?\s]|$)")
+# Anonymization placeholder "patient X" / "patienten X". "patient X-ray" does not match.
+_PATIENT_PLATSHALLARE = re.compile(
+    r"(?<![\w-])(?i:patient(?:en)?)\.?:?\s+([A-ZÅÄÖÉ])(?![\w-])")
 # Common Swedish given names plus those used in the synthetic tickets. This is a
 # heuristic gazetteer, not a complete civil register. Matching is casefold().
 _GIVEN_NAMES = frozenset("""
@@ -263,12 +273,35 @@ def _spann_namn_fore_id(text):
         yield m.start(1), m.end(1), "namn", NAMN_MASK
 
 
+def _spann_signatur_namn(text):
+    """Mask a gazetteer name after a staff-style slash signature ('/Mikael')."""
+    for m in _SIGNATUR_NAMN.finditer(text):
+        parts = m.group(1).split()
+        if parts[0].casefold() not in _GIVEN_NAMES:
+            continue
+        if len(parts) == 3 and parts[1].casefold() not in _GIVEN_NAMES:
+            parts = parts[:2]
+        if len(parts) >= 2:
+            last = parts[-1].casefold()
+            if last in _SURNAME_STOP or last.rstrip("s") in _SURNAME_STOP:
+                parts = parts[:-1]
+        span = " ".join(parts)
+        yield m.start(1), m.start(1) + len(span), "namn", NAMN_MASK
+
+
+def _spann_patient_platshallare(text):
+    """Mask a single capital letter used as a patient placeholder ('patient X')."""
+    for m in _PATIENT_PLATSHALLARE.finditer(text):
+        yield m.start(1), m.end(1), "namn", NAMN_MASK
+
+
 def _spann_svenska_namnpar(text):
     """Mask given-name + surname pairs when the ticket already looks like patient data.
 
-    Isolated given names ("/Mikael") and clinic phrases ("Demoklinik Norr") are left
-    alone. This is a heuristic: it will miss unusual names and can over-mask a rare
-    given-name + ordinary-word pair.
+    Clinic phrases ("Demoklinik Norr") are left alone. Slash signatures and the
+    single-letter placeholder "patient X" are handled separately. This is a
+    heuristic: it will miss unusual names and can over-mask a rare given-name +
+    ordinary-word pair.
     """
     if not isinstance(text, str) or not _PATIENT_ID_CONTEXT.search(text):
         return
@@ -306,8 +339,10 @@ def _kandidater(text, idag: date | None = None):
             _spann_organisationsnummer(text),
             _spann_enkel(text, _IDENT, "identifierare", IDENT_MASK),
             _spann_titel_namn(text),
+            _spann_patient_platshallare(text),
             _spann_namn_fore_id(text),
             _spann_svenska_namnpar(text),
+            _spann_signatur_namn(text),
             _spann_enkel(text, _NAMNLISTA, "namn", NAMN_MASK))
 
 

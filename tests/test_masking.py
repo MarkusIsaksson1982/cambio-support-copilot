@@ -115,15 +115,66 @@ class TestBareNameMasking:
         assert "19621105 7743" in masked
         assert "namn" in categories
 
-    def test_isolated_given_name_signature_remains(self):
+    def test_slash_signature_given_name_is_masked(self):
         text = (
             "Vi saknar labsvar i journalsystemet för Elsa Vinterberg, 870412-3456. "
             "/Mikael, avdelning 4"
         )
-        masked, _ = mask_text(text, date(2026, 11, 9))
+        masked, categories = mask_text(text, date(2026, 11, 9))
         assert "Elsa Vinterberg" not in masked
-        assert "Mikael" in masked
+        assert "Mikael" not in masked
+        assert "/[namn-maskat], avdelning 4" in masked
         assert "870412-3456" in masked
+        assert "namn" in categories
+
+    def test_bare_given_name_without_slash_or_surname_remains(self):
+        text = (
+            "Hej Mikael, journalsystemet visar inte labsvar för patienten. "
+            "Kan ni kolla kön?"
+        )
+        masked, _ = mask_text(text, date(2026, 11, 9))
+        assert "Mikael" in masked
+
+    def test_slash_signature_with_surname_is_not_clipped(self):
+        text = "Tack för hjälpen. /Astrid Holmgren, avdelning 4"
+        masked, categories = mask_text(text, date(2026, 11, 9))
+        assert "Astrid" not in masked
+        assert "Holmgren" not in masked
+        assert "/[namn-maskat], avdelning 4" in masked
+        assert "namn" in categories
+
+    def test_slash_signature_double_given_name_and_surname(self):
+        text = "Tack för hjälpen. /Anna Maria Svensson, avdelning 4"
+        masked, categories = mask_text(text, date(2026, 11, 9))
+        assert "Anna" not in masked
+        assert "Maria" not in masked
+        assert "Svensson" not in masked
+        assert "/[namn-maskat], avdelning 4" in masked
+        assert "namn" in categories
+
+    def test_slash_signature_followed_by_colon(self):
+        text = "Tack. /Mikael: prova igen i journalsystemet."
+        masked, _ = mask_text(text, date(2026, 11, 9))
+        assert "Mikael" not in masked
+        assert "/[namn-maskat]: prova igen" in masked
+
+    def test_slash_ul_is_not_treated_as_a_name(self):
+        text = "Patienten syns inte i sök efter undersökningen /UL igår."
+        masked, _ = mask_text(text, date(2026, 11, 9))
+        assert "/UL" in masked
+
+    def test_patient_letter_placeholder_is_masked(self):
+        text = "Kollegan rapporterade att patient X med personnummer 240101-1234 väntar."
+        masked, categories = mask_text(text, date(2026, 11, 9))
+        assert "patient X" not in masked
+        assert "patient [namn-maskat]" in masked
+        assert "240101-1234" in masked
+        assert "namn" in categories
+
+    def test_patient_xray_is_not_a_placeholder(self):
+        text = "Remissen för patient X-ray ligger kvar i kön."
+        masked, _ = mask_text(text, date(2026, 11, 9))
+        assert "patient X-ray" in masked
 
     def test_clinic_phrase_not_treated_as_a_name(self):
         text = (

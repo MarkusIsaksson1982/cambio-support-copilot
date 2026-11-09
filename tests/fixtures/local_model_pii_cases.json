@@ -58,12 +58,12 @@
   "id": "opencode-deepseek-v4.1-flash-free:T-003",
   "text": "Hej, vi saknar svar från klinisk kemi för Elsa Vinterberg, 870412-3456, i journalsystemet. Provet är taget och analyserat enligt labbets portal, men inget svar har kommit in via HL7 sedan i natt. Andra prover från samma labb har kommit in. Kan ni kontrollera om meddelandet fastnat i integrationsmotorn? Ärendet är brådskande eftersom patienten väntar på svar inför rond. /Mikael, avdelning 4",
   "must_be_masked": [
-   "Elsa Vinterberg"
-  ],
-  "known_gap": "Luhn-invalid personnummer are deliberately not masked; isolated given-name signatures such as '/Mikael' are not masked.",
-  "accepted_gaps": [
-   "870412-3456",
+   "Elsa Vinterberg",
    "Mikael"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "870412-3456"
   ]
  },
  {
@@ -71,23 +71,21 @@
   "text": "Hej, jag behöver hjälp med en ordination för Nils Kåremark, 920715-8123. Han står på Waran och ett nytt INR-svar ligger på 3,8. Jag är osäker på om jag ska ändra dosen enligt den lokala rutinen eller invänta jourläkare, eftersom patienten också fått ny antibiotika. Kan supporten ge råd om vilken dos som är rätt, eller måste jag prata med någon med kliniskt ansvar? /Lina, sjuksköterska",
   "must_be_masked": [
    "Nils Kåremark",
-   "920715-8123"
-  ],
-  "known_gap": "Isolated given-name signatures such as '/Lina' are not masked.",
-  "accepted_gaps": [
+   "920715-8123",
    "Lina"
-  ]
+  ],
+  "accepted_gaps": []
  },
  {
   "id": "opencode-deepseek-v4.1-flash-free:T-007",
   "text": "Allvarligt ärende: på avdelning 2 upptäckte vi att en patient fått två ordinationer av samma läkemedel registrerade, vilket ledde till att en extra dos gavs i går kväll. Berörd patient är Tova Sjöblom, 781129-4567. Jag har informerat ansvarig läkare och spärrat ordinationen i journalen, men vi behöver en formell avvikelserapport och hjälp att säkra loggarna innan de roteras. Vem tar över ärendet enligt incidentrutinen? /Anna, avdelningschef",
   "must_be_masked": [
-   "Tova Sjöblom"
-  ],
-  "known_gap": "Luhn-invalid personnummer are deliberately not masked; isolated given-name signatures such as '/Anna' are not masked.",
-  "accepted_gaps": [
-   "781129-4567",
+   "Tova Sjöblom",
    "Anna"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
+  "accepted_gaps": [
+   "781129-4567"
   ]
  },
  {
@@ -116,10 +114,11 @@
  {
   "id": "opencode-nemotron-3.5-lightning-free:T-008",
   "text": "Kollegan rapporterade att patient X med personnummer 240101-1234 har uppvisat ovanliga symtom efter ny behandling. Vi behöver rådgivning hur vi ska hantera this situationet fortsättningsvis.",
-  "must_be_masked": [],
-  "known_gap": "Placeholder 'patient X' is not a Swedish name pair; Luhn-invalid personnummer are deliberately not masked.",
+  "must_be_masked": [
+   "patient X"
+  ],
+  "known_gap": "Luhn-invalid personnummer are deliberately not masked.",
   "accepted_gaps": [
-   "patient X",
    "240101-1234"
   ]
  }
