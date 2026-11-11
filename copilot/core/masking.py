@@ -39,14 +39,18 @@ SYNTHETISKA_NAMN = ("Anna Svensson", "Erik Lindqvist", "Karin Ekström", "Lars �
                     "Fatima Hassan", "Bo Ek")
 
 # 12 (YYYYMMDD-XXXX) eller 10 (YYMMDD-XXXX) siffror, med bindestreck, plustecken
-# eller utan avgränsare. Avgränsarna skyddar mot att greda in i ett längre tal.
+# eller utan avgränsare. Enbart en grann-siffra blockerar träffen, så att vi inte
+# skär ut ett nummer ur ett längre tal. Bokstav, understreck eller bindestreck
+# intill numret får däremot inte dölja det: Anna811218-9876, 811218-9876Anna
+# och patient Anna_811218-9876 lämnades tidigare i klartext, och samma strikta
+# lookbehind gjorde att find_personnummer missade dem (ingen patient_data_detected).
 # 12 siffror bär århundradet; 10 tolkas med avgränsaren ('-' = under 100 år,
 # '+' = 100 år eller mer) och kontrollsumman (Luhn) räknas på tio siffror.
-_PERSONNUMMER = re.compile(r"(?<![\w-])(\d{4}|\d{2})(\d{2})(\d{2})([-+ ]?)(\d{4})(?![\w-])")
+_PERSONNUMMER = re.compile(r"(?<!\d)(\d{4}|\d{2})(\d{2})(\d{2})([-+ ]?)(\d{4})(?!\d)")
 # Organisationsnummer (Swedish organisation number): NNNNNN-NNNN, optionally prefixed "16"
 # (12-digit form used by Skatteverket). The third digit is 2 or higher, so it can never be a
 # valid personnummer month; the tenth digit is a Luhn check digit over the ten digits.
-_ORGNR = re.compile(r"(?<![\w-])(?:16)?(\d{2}[2-9]\d{3})-?(\d{4})(?![\w-])")
+_ORGNR = re.compile(r"(?<!\d)(?:16)?(\d{2}[2-9]\d{3})-?(\d{4})(?!\d)")
 _EPOST = re.compile(r"(?<![\w-])[\w.+-]+(?:@|\(at\))[\w-]+(?:\.[\w-]+)+(?![\w-])", re.IGNORECASE)
 # Svenska telefonnummer: 070-174 06 05, 0701740605, +46 70 174 06 05 samt fasta nummer med riktnummer (08-, 0xx-).
 # Områdesnumret måste se ut som ett svenskt område (07x mobil, 08/031/090 fast), och
@@ -54,10 +58,10 @@ _EPOST = re.compile(r"(?<![\w-])[\w.+-]+(?:@|\(at\))[\w-]+(?:\.[\w-]+)+(?![\w-])
 # tidigare tog varje siffersträng med tillräckligt många grupper, och fångade därför
 # datum, belopp och ordningsnummer.
 _TELEFON = re.compile(
-    r"(?<![\w-])(?:\(\s*\+?46\s*\)[\s.-]?|\(\s*0|\+46[\s.-]?|0046[\s.-]?|0)"
+    r"(?<!\d)(?:\(\s*\+?46\s*\)[\s.-]?|\(\s*0|\+46[\s.-]?|0046[\s.-]?|0)"
     r"(?:7[0-9]\)?[\s.-]?\d{3}[\s.-]?\d{2}[\s.-]?\d{2}"            # mobil: 070-174 06 05 / (070) 174 06 05
     r"|[1-9]\d{0,2}\)?[\s.-]?\d{2,4}[\s.-]?\d{2,4}[\s.-]?\d{2})"  # fast: riktnummer + abonnentnummer
-    r"(?![\w-])")
+    r"(?!\d)")
 # Andra direkta identifierare: patient-/dossier-/ärendenummer och liknande.
 _IDENT = re.compile(
     r"(?<![\w-])(?:(?:patient|dossier|ärende|avdelning|vårdenhet|journal)"

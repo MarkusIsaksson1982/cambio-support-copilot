@@ -300,3 +300,132 @@ class TestGluedIdentifiers:
         assert "namn" in categories
         assert "personnummer" not in categories
         assert find_personnummer(masked, self.today) == []
+
+
+class TestLetterGluedIdentifiers:
+    """A valid identifier glued to letters, '_', or an extra hyphen used to
+    stay in the clear.
+
+    The 4674255 fixpoint only helped when a first pass already wrote a mask
+    token, and it only softened one following '-', '+' or space. Without a
+    title cue (`Anna811218-9876`), with the number on the right
+    (`811218-9876Anna`), with '_' glue, or with '--' glue, both mask_text
+    and find_personnummer missed the number. A login ticket that would
+    otherwise be awaiting_approval then kept the raw personnummer and never
+    set patient_data_detected.
+
+    Identifier scanners now treat only a neighbouring *digit* as a boundary,
+    so they cannot slice a longer number but no longer hide a valid one
+    behind a letter. Invalid-Luhn shapes stay visible on purpose.
+    """
+
+    today = date(2026, 1, 1)
+
+    def _assert_gone(self, raw: str, masked: str, *fragments: str) -> None:
+        for fragment in fragments:
+            assert fragment not in masked, (raw, masked, fragment)
+
+    def test_personnummer_glued_to_name_without_title_is_masked(self):
+        cases = (
+            ("Anna811218-9876", "811218-9876"),
+            ("Anna-811218-9876", "811218-9876"),
+            ("Anna8112189876", "8112189876"),
+        )
+        for raw, fragment in cases:
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, "811218-9876", "8112189876")
+            assert "personnummer" in categories
+            assert find_personnummer(raw, self.today) == [fragment]
+            assert find_personnummer(masked, self.today) == []
+
+    def test_full_listed_name_glued_to_personnummer_is_masked(self):
+        raw = "Anna Svensson811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "811218-9876", "8112189876")
+        assert "personnummer" in categories
+        assert find_personnummer(raw, self.today) == ["811218-9876"]
+        assert find_personnummer(masked, self.today) == []
+
+    def test_personnummer_glued_on_the_right_is_masked(self):
+        for raw, fragment in (
+            ("811218-9876Anna", "811218-9876"),
+            ("8112189876Anna", "8112189876"),
+            ("patient 811218-9876Anna", "811218-9876"),
+        ):
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, fragment)
+            assert "personnummer" in categories
+            assert fragment in find_personnummer(raw, self.today)
+            assert find_personnummer(masked, self.today) == []
+
+    def test_underscore_glue_after_masked_name(self):
+        raw = "patient Anna_811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "811218-9876", "Anna")
+        assert masked == "patient [namn-maskat]_[personnummer-maskat]"
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(raw, self.today) == ["811218-9876"]
+        assert find_personnummer(masked, self.today) == []
+
+    def test_double_hyphen_glue_after_masked_name(self):
+        raw = "patient Anna--811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "811218-9876", "Anna")
+        assert masked == "patient [namn-maskat]--[personnummer-maskat]"
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_lowercase_or_allcaps_name_glued_to_personnummer(self):
+        # Title+name requires an initial capital plus lowercase letters, so
+        # the name may stay visible; the personnummer must not.
+        for raw in ("patient anna811218-9876", "patient ANNA811218-9876"):
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, "811218-9876")
+            assert "personnummer" in categories
+            assert find_personnummer(masked, self.today) == []
+
+    def test_12_digit_and_samordningsnummer_glued_without_title(self):
+        cases = (
+            ("Anna19870312-4514", "19870312-4514"),
+            ("Anna198703124514", "198703124514"),
+            ("19870312-4514Anna", "19870312-4514"),
+            ("Anna850372-0016", "850372-0016"),
+            ("850372-0016Anna", "850372-0016"),
+        )
+        for raw, fragment in cases:
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, fragment)
+            assert "personnummer" in categories
+            assert fragment in find_personnummer(raw, self.today)
+            assert find_personnummer(masked, self.today) == []
+
+    def test_orgnr_and_phone_glued_to_letters(self):
+        cases = (
+            ("Anna556677-8899", "556677-8899", "organisationsnummer", find_organisationsnummer),
+            ("556677-8899Anna", "556677-8899", "organisationsnummer", find_organisationsnummer),
+            ("Anna0701740605", "0701740605", "telefon", None),
+            ("0701740605Anna", "0701740605", "telefon", None),
+        )
+        for raw, fragment, category, finder in cases:
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, fragment)
+            assert category in categories
+            if finder is not None:
+                assert fragment in finder(raw)
+                assert finder(masked) == []
+
+    def test_leading_digit_does_not_slice_an_inner_personnummer(self):
+        # 811218-9876 is a valid number; a leading extra digit must still
+        # prevent a match inside the longer digit run.
+        raw = "1811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        assert "1811218-9876" in masked
+        assert "personnummer" not in categories
+        assert find_personnummer(raw, self.today) == []
+
+    def test_invalid_luhn_glued_without_title_stays_visible(self):
+        raw = "Anna123412-1234"
+        masked, categories = mask_text(raw, self.today)
+        assert "123412-1234" in masked
+        assert "personnummer" not in categories
+        assert find_personnummer(raw, self.today) == []

@@ -63,6 +63,25 @@ class TestPipeline:
         assert "patient_data_detected" in result["handoff_reasons"]
         assert result["status"] == "handoff"
 
+    def test_letter_glued_personnummer_forces_patient_data_handoff(self):
+        # Without a title cue the old lookbehind left the number in the clear
+        # and skipped patient_data_detected, so a ticket that otherwise awaits
+        # approval could be sent with a raw personnummer.
+        baseline = "Jag kan inte logga in i journalsystemet. Kan ni återställa mitt lösenord?"
+        clean = make_pipeline_result({"id": "glue-base", "text": baseline}, adapter=NoneAdapter())
+        assert clean["status"] == "awaiting_approval"
+        assert clean["handoff_reasons"] == []
+
+        ticket = {
+            "id": "glue-001",
+            "text": baseline + " Anna811218-9876",
+        }
+        result = make_pipeline_result(ticket, adapter=NoneAdapter())
+        assert "811218-9876" not in result["masked_text"]
+        assert "personnummer" in result["masked_categories"]
+        assert "patient_data_detected" in result["handoff_reasons"]
+        assert result["status"] == "handoff"
+
     def test_journalfel_suggest_request_type_incident_report(self):
         ticket = {
             "id": "test-006",

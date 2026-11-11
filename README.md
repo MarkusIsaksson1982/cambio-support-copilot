@@ -12,7 +12,7 @@ Request types are **plugins** (`copilot/plugins/*`). `support_ticket` and `incid
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/python -m pytest -q                                 # 147 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
+.venv/bin/python -m pytest -q                                 # 158 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
 .venv/bin/python -m copilot eval                              # offline pack, docs/EVAL-2026-11-08.md
 .venv/bin/uvicorn copilot.api:app --host 127.0.0.1 --port 8000
 ```
@@ -71,7 +71,7 @@ Prompts sent to outside models were checked first so they contained no personal 
 
 ## What landed on 9 Nov
 - Bare Swedish given-name + surname pairs in patient context are masked as `[namn-maskat]`. The matcher combines role cues (`patient`, `testpatienten`, `Exempelpatient:`), a name sitting immediately before a personnummer-shaped token, and a given-name gazetteer. On G-001 both the Skatteverket test number and the synthetic name are masked.
-- Staff slash-signatures such as `/Mikael` and the single-letter placeholder `patient X` are also masked. A bare given name with no slash, title or surname (for example `Hej Mikael,`) can still appear. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff. A name glued to a personnummer or organisationsnummer (`patient Anna811218-9876`) is re-scanned until both are masked.
+- Staff slash-signatures such as `/Mikael` and the single-letter placeholder `patient X` are also masked. A bare given name with no slash, title or surname (for example `Hej Mikael,`) can still appear. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff. A name glued to a personnummer or organisationsnummer (`patient Anna811218-9876`) is re-scanned until both are masked. A valid personnummer, organisationsnummer or phone glued to letters, an underscore or an extra hyphen (`Anna811218-9876`, `811218-9876Anna`, `patient Anna_811218-9876`) is also masked, and forces `patient_data_detected`.
 - Shared port fixtures were regenerated from the live pipeline. `incident_report` now shows `status: draft` (the plugin has been implemented since 7 Nov). The live plugin never returns `not_implemented`.
 
 ## Demo page
@@ -89,6 +89,7 @@ These are deliberate demo limits, not unfinished buttons on the interview page.
 
 - **Luhn-invalid personnummer.** Masking stays Luhn-strict so G-003 can show the gap: `19850372-6614` remains visible and the case still hands off (`patient_data_detected`). The 10 xfailed tests are this class.
 - **Bare isolated given names.** A name with no slash signature, title/role cue or surname (for example `Hej Mikael,`) is left visible. Slash signatures (`/Mikael`) and the placeholder `patient X` are masked.
+- **Unusual separators.** Personnummer and organisationsnummer are only recognised with `-`, `+`, or a single ASCII space between the date and the last four digits. An en dash, a slash, or spaces around the hyphen (`Anna811218–9876`, `811218 - 9876`) stay visible, and `find_personnummer` misses them too.
 - **No incident form on the demo page.** The `incident_report` plugin is live on the API and CLI (`type=incident_report`, or `python -m copilot incident-from-envelope`). The four page buttons stay `support_ticket` so the 8-minute path is unchanged.
 - **API edit-on-handoff.** The page disables "Redigera och skicka" when `patient_data_detected` is set. The API still accepts `edit` on a handoff if `edited_reply` is supplied; that is the reviewed escape hatch.
 - **In-memory audit and results.** `RESULTS` and `AUDIT` on the demo API live in the process and disappear when it stops. `AuditLog` can append JSONL when given a path; the page does not do that. A second decision on the same id is blocked in the UI, not in the API.
