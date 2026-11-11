@@ -1,6 +1,6 @@
 import pytest
 from datetime import date
-from copilot.core.masking import mask_text
+from copilot.core.masking import find_organisationsnummer, find_personnummer, mask_text
 
 
 class TestMasking:
@@ -192,3 +192,111 @@ class TestBareNameMasking:
         assert "Gunnar Ek" not in masked
         assert "540918-3392" in masked
         assert "namn" in categories
+
+
+class TestGluedIdentifiers:
+    """Name glued to an identifier used to survive the first (and only) scan.
+
+    Title+name ran after personnummer. The PNR lookbehind saw the last letter
+    of the name as wordish, so the number was not collected; replacing the name
+    then left the digits in the clear (`patient Anna811218-9876` became
+    `patient [namn-maskat]811218-9876`). Re-scanning until a fixpoint, and
+    treating a mask token plus one following '-', '+' or space as a boundary,
+    closes that gap.
+    """
+
+    today = date(2026, 1, 1)
+
+    def _assert_gone(self, raw: str, masked: str, *fragments: str) -> None:
+        for fragment in fragments:
+            assert fragment not in masked, (raw, masked, fragment)
+
+    def test_glued_name_and_personnummer_without_separator(self):
+        raw = "patient Anna811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "811218-9876", "8112189876", "Anna")
+        assert masked == "patient [namn-maskat][personnummer-maskat]"
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_name_and_personnummer_with_hyphen(self):
+        raw = "patient Anna-811218-9876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "811218-9876", "8112189876", "Anna")
+        assert masked == "patient [namn-maskat]-[personnummer-maskat]"
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_name_and_10_digit_personnummer_no_hyphen(self):
+        raw = "patient Anna8112189876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "8112189876", "Anna")
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_name_and_12_digit_personnummer_with_hyphen(self):
+        raw = "patient Anna19870312-4514"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "19870312-4514", "198703124514", "870312-4514", "Anna")
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_name_and_12_digit_personnummer_no_hyphen(self):
+        raw = "patient Anna198703124514"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "198703124514", "19870312-4514", "Anna")
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_title_lastname_and_century_prefixed_personnummer(self):
+        raw = "dr Lindqvist198112189876"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "198112189876", "19811218-9876", "811218-9876", "Lindqvist")
+        assert "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_glued_name_and_orgnr_with_and_without_hyphen(self):
+        for raw, leftover_hyphen in (
+            ("patient Anna556677-8899", False),
+            ("patient Anna-556677-8899", True),
+            ("patient Anna5566778899", False),
+        ):
+            masked, categories = mask_text(raw, self.today)
+            self._assert_gone(raw, masked, "556677-8899", "5566778899", "Anna")
+            assert "organisationsnummer" in categories and "namn" in categories
+            assert find_organisationsnummer(masked) == []
+            if leftover_hyphen:
+                assert masked == "patient [namn-maskat]-[organisationsnummer-maskat]"
+            else:
+                assert masked == "patient [namn-maskat][organisationsnummer-maskat]"
+
+    def test_email_adjacent_to_glued_name_and_personnummer(self):
+        raw = "patient Anna811218-9876 kontakta foo@example.se"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(
+            raw, masked,
+            "811218-9876", "8112189876", "Anna",
+            "foo@example.se",
+        )
+        assert masked == (
+            "patient [namn-maskat][personnummer-maskat] kontakta [epost-maskat]"
+        )
+        assert "epost" in categories and "personnummer" in categories and "namn" in categories
+        assert find_personnummer(masked, self.today) == []
+
+    def test_name_glued_to_email_is_swallowed_as_email(self):
+        # PRIORITET puts e-mail first, so Annafoo@example.se is one address.
+        raw = "patient Annafoo@example.se"
+        masked, categories = mask_text(raw, self.today)
+        self._assert_gone(raw, masked, "Annafoo@example.se", "foo@example.se", "Anna")
+        assert masked == "patient [epost-maskat]"
+        assert categories == ["epost"]
+
+    def test_invalid_luhn_glued_to_name_stays_visible(self):
+        raw = "patient Anna123412-1234"
+        masked, categories = mask_text(raw, self.today)
+        assert "Anna" not in masked
+        assert "123412-1234" in masked
+        assert "namn" in categories
+        assert "personnummer" not in categories
+        assert find_personnummer(masked, self.today) == []

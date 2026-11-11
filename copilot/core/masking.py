@@ -351,17 +351,45 @@ def _krock(start: int, stop: int, träffar: list[tuple]) -> bool:
     return any(start < t[1] and stop > t[0] for t in träffar)
 
 
-def mask_text(text, idag: date | None = None) -> tuple[str, list[str]]:
-    """Maskera alla identifierare. Returnera (maskad text, kategorier i prioritetsordning).
+# Tokens this module writes. Built from MASKER so a new category stays in sync.
+_MASK_TOKEN = re.compile("|".join(re.escape(token) for token in MASKER.values()))
+# After a token, a single '-', '+' or space still blocks identifier lookbehinds
+# because those characters count as wordish in the identifier lookbehind. Treat that one glue character as
+# a boundary too, so a second pass can see a number glued on with a hyphen.
+_GLUE_AFTER_TOKEN = frozenset("-+ ")
 
-    Kategorierna (t.ex. ["personnummer", "namn"]) går vidare till trace, så att det
-    går att se att maskningen skett - utan att de råa värdena någonstans skrivs ut.
-    `idag` är referensdatumet för århundradet i tioåriget personnummer.
+
+def _soften_masked_boundaries(text: str) -> str:
+    """Replace already-written mask tokens (and one following glue char) with spaces.
+
+    Same length as `text`, so span offsets from the scanners still apply to the
+    original string. A first pass that masks a name glued to a personnummer,
+    e.g. `patient Anna811218-9876` -> `patient [namn-maskat]811218-9876`, leaves
+    the digits visible: the original wordish lookbehind failed against the
+    last letter of the name. After replacement `]` is not wordish, so a second
+    pass would find the number — except the hyphenated form
+    `patient Anna-811218-9876` becomes `[namn-maskat]-811218-9876`, and `-`
+    still blocks the lookbehind. Softening the token and that one glue
+    character makes the identifier scanners treat the mask as a boundary
+    without changing any other text.
     """
-    if not isinstance(text, str):
-        return text, []
+    if "[" not in text:
+        return text
+    chars = list(text)
+    for match in _MASK_TOKEN.finditer(text):
+        for i in range(match.start(), match.end()):
+            chars[i] = " "
+        glue_at = match.end()
+        if glue_at < len(text) and text[glue_at] in _GLUE_AFTER_TOKEN:
+            chars[glue_at] = " "
+    return "".join(chars)
+
+
+def _mask_once(text: str, idag: date) -> tuple[str, list[str]]:
+    """One scan/replace pass. Scanners run on a softened view; edits apply to `text`."""
+    view = _soften_masked_boundaries(text)
     träffar: list[tuple[int, int, str, str]] = []
-    for kandidater in _kandidater(text, idag):
+    for kandidater in _kandidater(view, idag):
         for start, stopp, kategori, ersättning in kandidater:
             if _krock(start, stopp, träffar):
                 continue
@@ -377,6 +405,33 @@ def mask_text(text, idag: date | None = None) -> tuple[str, list[str]]:
     delar.append(text[förra:])
     kategorier = sorted({t[2] for t in träffar}, key=PRIORITET.index)
     return "".join(delar), kategorier
+
+
+def mask_text(text, idag: date | None = None) -> tuple[str, list[str]]:
+    """Maskera alla identifierare. Returnera (maskad text, kategorier i prioritetsordning).
+
+    Kategorierna (t.ex. ["personnummer", "namn"]) går vidare till trace, så att det
+    går att se att maskningen skett - utan att de råa värdena någonstans skrivs ut.
+    `idag` är referensdatumet för århundradet i tioåriget personnummer.
+
+    Re-scan until a fixpoint. A name glued to a personnummer is invisible to the
+    identifier lookbehind on the first pass (the last letter of the name is
+    wordish). After the name is replaced, a later pass sees the number. Each
+    changing pass replaces at least one raw span, so `len(text) + 1` is a hard
+    upper bound; real inputs settle in two passes.
+    """
+    if not isinstance(text, str):
+        return text, []
+    idag = idag or date.today()
+    collected: set[str] = set()
+    current = text
+    for _ in range(len(text) + 1):
+        masked, categories = _mask_once(current, idag)
+        collected.update(categories)
+        if masked == current:
+            break
+        current = masked
+    return current, sorted(collected, key=PRIORITET.index)
 
 
 def mask_note(text: str, idag: date | None = None) -> str:

@@ -12,7 +12,7 @@ Request types are **plugins** (`copilot/plugins/*`). `support_ticket` and `incid
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/python -m pytest -q                                 # 137 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
+.venv/bin/python -m pytest -q                                 # 147 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
 .venv/bin/python -m copilot eval                              # offline pack, docs/EVAL-2026-11-08.md
 .venv/bin/uvicorn copilot.api:app --host 127.0.0.1 --port 8000
 ```
@@ -71,7 +71,7 @@ Prompts sent to outside models were checked first so they contained no personal 
 
 ## What landed on 9 Nov
 - Bare Swedish given-name + surname pairs in patient context are masked as `[namn-maskat]`. The matcher combines role cues (`patient`, `testpatienten`, `Exempelpatient:`), a name sitting immediately before a personnummer-shaped token, and a given-name gazetteer. On G-001 both the Skatteverket test number and the synthetic name are masked.
-- Staff slash-signatures such as `/Mikael` and the single-letter placeholder `patient X` are also masked. A bare given name with no slash, title or surname (for example `Hej Mikael,`) can still appear. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff.
+- Staff slash-signatures such as `/Mikael` and the single-letter placeholder `patient X` are also masked. A bare given name with no slash, title or surname (for example `Hej Mikael,`) can still appear. Masking stays Luhn-strict: an invalid number is not rewritten, but a date-plausible shape in patient context still forces a handoff. A name glued to a personnummer or organisationsnummer (`patient Anna811218-9876`) is re-scanned until both are masked.
 - Shared port fixtures were regenerated from the live pipeline. `incident_report` now shows `status: draft` (the plugin has been implemented since 7 Nov). The live plugin never returns `not_implemented`.
 
 ## Demo page
