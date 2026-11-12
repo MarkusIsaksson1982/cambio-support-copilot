@@ -429,3 +429,33 @@ class TestLetterGluedIdentifiers:
         assert "123412-1234" in masked
         assert "personnummer" not in categories
         assert find_personnummer(raw, self.today) == []
+
+
+class TestLabelledIdWinsOverInnerNumber:
+    """67a3636 let a letter sit next to a personnummer/orgnr/phone. A number
+    inside a longer labelled id was then masked on its own: the rest of the
+    id stayed visible and the "identifierare" category (which forces a
+    patient-data handoff) was lost. The whole labelled id wins again."""
+
+    today = date(2026, 1, 1)
+
+    def test_labelled_ids_with_inner_numbers_are_masked_whole(self):
+        cases = (
+            ("patient-id P5566778899", "[identifierare-maskat]"),
+            ("HSA-id SE2321000016-1003 för läkaren", "[identifierare-maskat] för läkaren"),
+            ("hsa id SE2321000016-AB12", "[identifierare-maskat]"),
+            ("Patientnummer: 8112189876X", "[identifierare-maskat]"),
+            ("journalnummer J811218-9876", "[identifierare-maskat]"),
+        )
+        for raw, expected in cases:
+            masked, categories = mask_text(raw, self.today)
+            assert masked == expected, (raw, masked)
+            assert categories == ["identifierare"], (raw, categories)
+
+    def test_labelled_value_equal_to_the_number_keeps_the_number_category(self):
+        assert mask_text("patientnummer 811218-9876", self.today) == (
+            "patientnummer [personnummer-maskat]", ["personnummer"])
+
+    def test_bare_glued_numbers_keep_67a3636_behaviour(self):
+        assert mask_text("Anna811218-9876", self.today) == ("Anna[personnummer-maskat]", ["personnummer"])
+        assert mask_text("P5566778899", self.today) == ("P[organisationsnummer-maskat]", ["organisationsnummer"])

@@ -66,8 +66,16 @@ _TELEFON = re.compile(
 _IDENT = re.compile(
     r"(?<![\w-])(?:(?:patient|dossier|ärende|avdelning|vårdenhet|journal)"
     r"\s*-?\s*(?:nummer|id|nr|no)|journalnummer|hsa[\s-]?id)"
-    r"\s*[:#]?\s*[A-Za-z0-9][A-Za-z0-9_-]{3,}",
+    r"\s*[:#]?\s*([A-Za-z0-9][A-Za-z0-9_-]{3,})",
     re.IGNORECASE)
+# Since the identifier scanners stopped treating a letter as a boundary,
+# a number inside a longer labelled id ("patient-id P5566778899",
+# "HSA-id SE2321000016-1003") is found as an orgnr/personnummer/phone first.
+# That masked only the digits, left the rest of the id (e.g. "-1003")
+# visible and dropped the "identifierare" category, so the ticket no longer
+# forced a patient-data handoff. When the labelled id's value is longer than
+# the number inside it, the whole labelled id wins.
+_NUMERISKA = frozenset(("telefon", "personnummer", "organisationsnummer"))
 # Titel eller roll före ett namn: "dr Lindqvist", "patient Anna Svensson".
 _TITLAR = (r"dr|docent|professor|överläkare|läkare|sjuksköterska|sjuksköterskor|"
            r"receptionist|fru|herr|barn|pojkar|"
@@ -357,9 +365,10 @@ def _krock(start: int, stop: int, träffar: list[tuple]) -> bool:
 
 # Tokens this module writes. Built from MASKER so a new category stays in sync.
 _MASK_TOKEN = re.compile("|".join(re.escape(token) for token in MASKER.values()))
-# After a token, a single '-', '+' or space still blocks identifier lookbehinds
-# because those characters count as wordish in the identifier lookbehind. Treat that one glue character as
-# a boundary too, so a second pass can see a number glued on with a hyphen.
+# After a token, a single '-', '+' or space is still softened. Before 67a3636 those
+# characters were wordish and blocked the identifier lookbehind; now only a neighbouring
+# digit does. Softening the token and that one glue character remains useful so a second
+# pass treats the mask as a clean boundary without changing any other text.
 _GLUE_AFTER_TOKEN = frozenset("-+ ")
 
 
@@ -367,15 +376,15 @@ def _soften_masked_boundaries(text: str) -> str:
     """Replace already-written mask tokens (and one following glue char) with spaces.
 
     Same length as `text`, so span offsets from the scanners still apply to the
-    original string. A first pass that masks a name glued to a personnummer,
-    e.g. `patient Anna811218-9876` -> `patient [namn-maskat]811218-9876`, leaves
-    the digits visible: the original wordish lookbehind failed against the
-    last letter of the name. After replacement `]` is not wordish, so a second
-    pass would find the number — except the hyphenated form
+    original string. Before the digit-only lookarounds (67a3636), a first pass
+    that masked a name glued to a personnummer, e.g.
+    `patient Anna811218-9876` -> `patient [namn-maskat]811218-9876`, left the
+    digits visible: the wordish lookbehind failed against the last letter of
+    the name. After replacement `]` is not wordish, so a second pass would
+    find the number — except the hyphenated form
     `patient Anna-811218-9876` becomes `[namn-maskat]-811218-9876`, and `-`
-    still blocks the lookbehind. Softening the token and that one glue
-    character makes the identifier scanners treat the mask as a boundary
-    without changing any other text.
+    still blocked the lookbehind. Softening the token and that one glue
+    character remains a clean boundary for the fixpoint pass.
     """
     if "[" not in text:
         return text
@@ -389,6 +398,20 @@ def _soften_masked_boundaries(text: str) -> str:
     return "".join(chars)
 
 
+def _omslutande_identifierare(view: str, träffar: list[tuple]) -> list[tuple]:
+    """Let a labelled id win over a shorter phone/personnummer/orgnr inside its value."""
+    for m in _IDENT.finditer(view):
+        värde_start, värde_stopp = m.span(1)
+        inne = [t for t in träffar if t[0] < m.end() and t[1] > m.start()]
+        if not inne:
+            continue
+        if all(t[2] in _NUMERISKA and värde_start <= t[0] and t[1] <= värde_stopp
+               and t[1] - t[0] < värde_stopp - värde_start for t in inne):
+            träffar = [t for t in träffar if t not in inne]
+            träffar.append((m.start(), m.end(), "identifierare", IDENT_MASK))
+    return träffar
+
+
 def _mask_once(text: str, idag: date) -> tuple[str, list[str]]:
     """One scan/replace pass. Scanners run on a softened view; edits apply to `text`."""
     view = _soften_masked_boundaries(text)
@@ -398,6 +421,7 @@ def _mask_once(text: str, idag: date) -> tuple[str, list[str]]:
             if _krock(start, stopp, träffar):
                 continue
             träffar.append((start, stopp, kategori, ersättning))
+    träffar = _omslutande_identifierare(view, träffar)
     if not träffar:
         return text, []
     delar = []
@@ -418,11 +442,13 @@ def mask_text(text, idag: date | None = None) -> tuple[str, list[str]]:
     går att se att maskningen skett - utan att de råa värdena någonstans skrivs ut.
     `idag` är referensdatumet för århundradet i tioåriget personnummer.
 
-    Re-scan until a fixpoint. A name glued to a personnummer is invisible to the
-    identifier lookbehind on the first pass (the last letter of the name is
-    wordish). After the name is replaced, a later pass sees the number. Each
-    changing pass replaces at least one raw span, so `len(text) + 1` is a hard
-    upper bound; real inputs settle in two passes.
+    Re-scan until a fixpoint. A name glued to a personnummer used to be
+    invisible to the identifier lookbehind on the first pass (the last letter
+    of the name was wordish). After 67a3636 only a neighbouring digit blocks,
+    so many glued cases are found on the first pass; the fixpoint pass still
+    catches a name that is itself a mask token next to a leftover number.
+    Each changing pass replaces at least one raw span, so `len(text) + 1` is
+    a hard upper bound; real inputs settle in one or two passes.
     """
     if not isinstance(text, str):
         return text, []

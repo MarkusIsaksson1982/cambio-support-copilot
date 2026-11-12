@@ -82,6 +82,19 @@ class TestPipeline:
         assert "patient_data_detected" in result["handoff_reasons"]
         assert result["status"] == "handoff"
 
+    def test_labelled_patient_id_with_inner_orgnr_shape_forces_handoff(self):
+        # After 67a3636 the digits inside "P5566778899" matched as an orgnr,
+        # the identifierare category was dropped and the ticket stayed
+        # awaiting_approval. The labelled id must win and hand off.
+        baseline = "Jag kan inte logga in i journalsystemet. Kan ni återställa mitt lösenord?"
+        ticket = {"id": "labelled-id-001", "text": baseline + " patient-id P5566778899"}
+        result = make_pipeline_result(ticket, adapter=NoneAdapter())
+        assert "P5566778899" not in result["masked_text"]
+        assert "5566778899" not in result["masked_text"]
+        assert result["masked_categories"] == ["identifierare"]
+        assert "patient_data_detected" in result["handoff_reasons"]
+        assert result["status"] == "handoff"
+
     def test_journalfel_suggest_request_type_incident_report(self):
         ticket = {
             "id": "test-006",

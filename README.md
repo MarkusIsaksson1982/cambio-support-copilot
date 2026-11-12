@@ -12,7 +12,7 @@ Request types are **plugins** (`copilot/plugins/*`). `support_ticket` and `incid
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/python -m pytest -q                                 # 158 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
+.venv/bin/python -m pytest -q                                 # 162 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
 .venv/bin/python -m copilot eval                              # offline pack, docs/EVAL-2026-11-08.md
 .venv/bin/uvicorn copilot.api:app --host 127.0.0.1 --port 8000
 ```
@@ -89,7 +89,7 @@ These are deliberate demo limits, not unfinished buttons on the interview page.
 
 - **Luhn-invalid personnummer.** Masking stays Luhn-strict so G-003 can show the gap: `19850372-6614` remains visible and the case still hands off (`patient_data_detected`). The 10 xfailed tests are this class.
 - **Bare isolated given names.** A name with no slash signature, title/role cue or surname (for example `Hej Mikael,`) is left visible. Slash signatures (`/Mikael`) and the placeholder `patient X` are masked.
-- **Unusual separators.** Personnummer and organisationsnummer are only recognised with `-`, `+`, or a single ASCII space between the date and the last four digits. An en dash, a slash, or spaces around the hyphen (`Anna811218–9876`, `811218 - 9876`) stay visible, and `find_personnummer` misses them too.
+- **Unusual separators.** Personnummer are only recognised with `-`, `+`, or a single ASCII space between the date and the last four digits. Organisationsnummer accept an optional hyphen only (`556677-8899` or the 12-digit `16`-prefixed form), not a space. An en dash, a slash, or spaces around the hyphen (`Anna811218–9876`, `811218 - 9876`) stay visible, and `find_personnummer` misses them too. Other residual gaps: a dotted or double-spaced or NBSP separator, an organisationsnummer with a space (`Anna556677 8899`), and some phone forms (`+46 (0)70 174 06 05`, `070–174 06 05`).
 - **No incident form on the demo page.** The `incident_report` plugin is live on the API and CLI (`type=incident_report`, or `python -m copilot incident-from-envelope`). The four page buttons stay `support_ticket` so the 8-minute path is unchanged.
 - **API edit-on-handoff.** The page disables "Redigera och skicka" when `patient_data_detected` is set. The API still accepts `edit` on a handoff if `edited_reply` is supplied; that is the reviewed escape hatch.
 - **In-memory audit and results.** `RESULTS` and `AUDIT` on the demo API live in the process and disappear when it stops. `AuditLog` can append JSONL when given a path; the page does not do that. A second decision on the same id is blocked in the UI, not in the API.
@@ -98,3 +98,5 @@ These are deliberate demo limits, not unfinished buttons on the interview page.
 - **Language ports are contract round-trips.** `ports/csharp`, `ports/java` and `ports/typescript` deserialize and re-serialize the shared JSON fixtures. They do not reimplement the Python pipeline. The incident schema still allows `status: not_implemented` for older consumers; the live plugin emits `draft`.
 - **Retrieval is token overlap**, with a light Swedish stem, not a neural ranker. ticket-008 is the known false friend (print-runbook citation). The hit threshold is frozen for interview week.
 - **Live-model variability.** `docs/EVAL-2026-11-08.md` repeats the offline path three times and does not call a model. A separate three-repeat probe is in `docs/LIVE-PROBE-2026-11-09.md`. It is not that score. The demo page stays on adapter `none`. `--adapter fake` remains a CLI-only deterministic stub.
+- **To do: second-runtime masking.** Port the masking core to a second runtime with property-checked invariants and formally checked masking rules. Deferred; not part of the live demo.
+- **To do: identifier coverage.** Extend identifierare patterns and gazetteer extras.
