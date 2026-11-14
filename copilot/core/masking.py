@@ -77,18 +77,24 @@ _IDENT = re.compile(
 # the number inside it, the whole labelled id wins.
 _NUMERISKA = frozenset(("telefon", "personnummer", "organisationsnummer"))
 # Titel eller roll före ett namn: "dr Lindqvist", "patient Anna Svensson".
-_TITLAR = (r"dr|docent|professor|överläkare|läkare|sjuksköterska|sjuksköterskor|"
-           r"receptionist|fru|herr|barn|pojkar|"
-           # Vanliga rollförkortningar i svensk vård (ssk, usk, böl, mas, dsk).
-           r"ssk|usk|böl|mas|dsk")
 _NAMNKUPPLETER = (r"patient|patienten|testpatienten|övningspatienten|"
                   r"exempelpatient|exempelnamn|exempelpersonen|"
                   r"pojken|flickan|granskare|granskat\s+av|"
                   r"inrapporterad\s+av|ansvarig")
 _EFTERNAMN = r"[A-ZÅÄÖÉ][a-zåäöé]+(?:-[A-ZÅÄÖÉa-zåäöé]+)?"
-# Optional colon after the cue: "Exempelpatient: Tova Näckros".
-_TITEL_NAMN = re.compile(r"(?<![\w-])(?i:" + _TITLAR + r"|" + _NAMNKUPPLETER + r")\.?:?\s+"
-                         r"(" + _EFTERNAMN + r"(?:\s+" + _EFTERNAMN + r")?)")
+# Short titles are often written with a period: "dr. Lindqvist", "ssk. Anna",
+# "fru. Svensson". Full words and role cues are not. A sentence period plus a
+# capitalised word ("patienten. Kontakta", "patient. Hej") is the next
+# sentence, not a name. Those cues still take a colon or a space
+# ("Exempelpatient: Tova Näckros", "patient Anna Berg", "patienten: Anna").
+_TITEL_ABBREV = r"dr|ssk|usk|böl|mas|dsk|fru|herr"
+_TITEL_ORD = (r"docent|professor|överläkare|läkare|sjuksköterska|sjuksköterskor|"
+              r"receptionist|barn|pojkar|" + _NAMNKUPPLETER)
+_TITEL_NAMN = re.compile(
+    r"(?<![\w-])(?:"
+    r"(?i:" + _TITEL_ABBREV + r")\.?:?\s+"
+    r"|(?i:" + _TITEL_ORD + r"):?\s+"
+    r")(" + _EFTERNAMN + r"(?:\s+" + _EFTERNAMN + r")?)")
 # Optional Swedish genitive -s/-es on the listed name (Anna Svenssons).
 _NAMNLISTA = re.compile(r"(?<![\w-])(?:"
                         + "|".join(re.escape(n) for n in sorted(SYNTHETISKA_NAMN, key=len,

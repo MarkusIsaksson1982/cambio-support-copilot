@@ -12,7 +12,7 @@ Request types are **plugins** (`copilot/plugins/*`). `support_ticket` and `incid
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install -e '.[dev]'
-.venv/bin/python -m pytest -q                                 # 162 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
+.venv/bin/python -m pytest -q                                 # 189 passed, 10 xfailed (Luhn-invalid personnummer; still a handoff)
 .venv/bin/python -m copilot eval                              # offline pack, docs/EVAL-2026-11-08.md
 .venv/bin/uvicorn copilot.api:app --host 127.0.0.1 --port 8000
 ```

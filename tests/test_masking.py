@@ -194,6 +194,73 @@ class TestBareNameMasking:
         assert "namn" in categories
 
 
+class TestTitleCuePunctuation:
+    """A sentence period after a role cue is not a name separator.
+
+    `_TITEL_NAMN` used to allow `\\.?:?` after every cue, so
+    `patienten. Kontakta` masked `Kontakta`. Colons, spaces, and the period
+    on a short abbreviation (`dr.`) stay name separators.
+    """
+
+    today = date(2026, 11, 13)
+
+    @pytest.mark.parametrize("text", [
+        "Jag hittar inte patienten. Kontakta support.",
+        "Hej Mikael, journalsystemet visar inte labsvar för patienten. Kan ni kolla kön?",
+        "för patienten. Hon syns inte",
+        "för patienten. Vi behöver anteckningen",
+        "patienten.\nKontakta support.",
+        "Flytta felaktig anteckning till rätt patient. Hej support.",
+        "läkare. Kontakta support.",
+        "sjuksköterska. Hon väntar.",
+        "professor. Ek kommer i morgon.",
+        "docent. Lindqvist skrev remissen.",
+    ])
+    def test_sentence_period_after_full_cue_is_not_a_name(self, text):
+        masked, categories = mask_text(text, self.today)
+        assert masked == text
+        assert "namn" not in categories
+        assert "[namn-maskat]" not in masked
+
+    def test_g002_hej_stays_and_luhn_gap_stays(self):
+        text = (
+            "Flytta felaktig anteckning till rätt patient. Hej support. "
+            "Jag skrev en ADL-anteckning på fel patient i journalsystemet. "
+            "Anteckningen ligger på Gunnar Ek 540918-3392 men ska till rätt journal."
+        )
+        masked, categories = mask_text(text, self.today)
+        assert "Hej support" in masked
+        assert "[namn-maskat] support" not in masked
+        assert "Gunnar Ek" not in masked
+        assert "540918-3392" in masked
+        assert "namn" in categories
+        assert "personnummer" not in categories
+
+    @pytest.mark.parametrize("text,hidden", [
+        ("Exempelpatient: Tova Näckros", "Tova Näckros"),
+        ("patient: Anna Berg", "Anna Berg"),
+        ("patienten: Anna Berg väntar.", "Anna Berg"),
+        ("patient Anna Berg", "Anna Berg"),
+        ("Det gäller testpatienten Astrid Holmgren i demokliniken.", "Astrid Holmgren"),
+        ("dr Lindqvist skrev remissen.", "Lindqvist"),
+        ("dr. Lindqvist skrev remissen.", "Lindqvist"),
+        ("Dr. Anna Berg skrev.", "Anna Berg"),
+        ("ssk. Anna rapporterade.", "Anna"),
+        ("ssk Anna rapporterade.", "Anna"),
+        ("fru. Svensson väntar.", "Svensson"),
+        ("herr Lindqvist skrev.", "Lindqvist"),
+        ("professor Ek skrev remissen.", "Ek"),
+        ("docent Lindqvist skrev remissen.", "Lindqvist"),
+        ("granskat av Erik Lindqvist", "Erik Lindqvist"),
+        ("inrapporterad av Karin Ekström", "Karin Ekström"),
+    ])
+    def test_colon_space_and_abbreviation_period_still_mask(self, text, hidden):
+        masked, categories = mask_text(text, self.today)
+        assert hidden not in masked
+        assert "[namn-maskat]" in masked
+        assert "namn" in categories
+
+
 class TestGluedIdentifiers:
     """Name glued to an identifier used to survive the first (and only) scan.
 
